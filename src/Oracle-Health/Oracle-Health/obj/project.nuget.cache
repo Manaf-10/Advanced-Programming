@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "tNbOmnc+vIM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Oracle-Health.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\e3gamez\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.13\\microsoft.windowsdesktop.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\e3gamez\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.13\\microsoft.netcore.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\e3gamez\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\e3gamez\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.13\\microsoft.netcore.app.host.win-x64.9.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
