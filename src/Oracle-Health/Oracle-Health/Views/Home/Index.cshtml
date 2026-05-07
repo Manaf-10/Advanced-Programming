@@ -1,8 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@* @{
+    ViewData["Title"] = "Appointments";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="appointments-container">
+    <h1 class="main-title">All appointments</h1>
+    <div class="appointments-container-header three-items-cell">
+        <p>Patient Name</p>
+        <p>Date</p>
+        <p>Status</p>
+    </div>
+    <div class="appointments-container">
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="Requested">Requested</p>
+        </div>
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="In-Progress">In-Progress</p>
+        </div>
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="Confirmed">Confirmed</p>
+        </div>
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="Checked-In">Checked-In</p>
+        </div>
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="Completed">Completed</p>
+        </div>
+        <div class="appointments-cell three-items-cell">
+            <p>Manaf Hujairi</p>
+            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
+            <p class="Cancelled">Cancelled</p>
+        </div>
+    </div>
+</div> *@
+
+@* 
+    @model YourProjectName.Models.AppointmentViewModel 
+    (Uncomment the line above once you create the Model) 
+*@
+
+<form action="/Appointments/UpdateDetails" method="post" class="appointment-form-container">
+    @* Anti-forgery token is required in ASP.NET Core forms for security *@
+    @Html.AntiForgeryToken()
+    @* Static title for now, will be @Model.PatientName later *@
+    <h1 class="main-title">Appointment : Manaf Hujairi</h1>
+    <div class="appointment-split-container">
+        <div class="appointments-inputs-container">
+            <div class="custom-input-container">
+                <div class="custom-input-field">
+                    <label for="Diagnosis">Diagnosis</label>
+                    <input type="text" id="Diagnosis" name="Diagnosis" class="form-control" />
+                    @* <span class="text-danger" asp-validation-for="Diagnosis"></span> *@
+                </div>
+
+                <div class="custom-input-field">
+                    <label for="Prescription">Prescription</label>
+                    <input type="text" id="Prescription" name="Prescription" class="form-control" />
+                </div>
+
+                <div class="custom-input-field">
+                    <label for="Notes">Notes</label>
+                    @* Changed to a textarea for better UX, but kept your class *@
+                    <input type="text" id="Notes" name="Notes" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="appointment-buttons-container">
+            <button type="submit" class="custom-button">Submit</button>
+            <button type="submit" class="custom-button">Cancel</button>
+        </div>
+    </div>
+</form>

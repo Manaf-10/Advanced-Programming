@@ -1,0 +1,8 @@
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\appointments-icon.png
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\dummy-user-image.png
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\favicon.ico
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\logo.svg
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\notifications-icon.png
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\patients.png
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\user-pfp.svg
+C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\visit-icon.png
