@@ -1,3 +1,4 @@
+wwwroot\css\site.css
 wwwroot\images\appointments-icon.png
 wwwroot\images\dummy-user-image.png
 wwwroot\images\favicon.ico
@@ -117,7 +118,6 @@ wwwroot\oracle-sans\OracleSans-UltraLightItalic.ttf
 wwwroot\oracle-sans\OracleSans-UltraLightItalic.woff
 wwwroot\oracle-sans\OracleSans-UltraLightItalic.woff2
 wwwroot\oracle-sans\stylesheet.css
-wwwroot\css\site.css
 C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\images\favicon.ico
 C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\images\logo.svg
 C:\Users\manaf\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\images\user-pfp.svg
