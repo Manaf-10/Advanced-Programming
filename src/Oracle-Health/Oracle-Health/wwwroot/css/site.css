@@ -11,14 +11,14 @@
 
 @font-face {
   font-family: "Oracle-Sans";
-  src: url("./oracle-sans/OracleSans-Regular.woff2") format("woff2");
+  src: url("../oracle-sans/OracleSans-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }
 
 .main-title {
   color: var(--secondairy-color);
-  margin-left: 1%;
+  margin-left: 1.5%;
 }
 
 body {
@@ -184,8 +184,8 @@ nav a img {
 
 .appointment-buttons-container {
   width: 50%;
+  height: 7vh;
   border-radius: 9px;
-
   margin-left: 1.5%;
   margin-top: 1%;
 }
@@ -238,8 +238,8 @@ form {
   background-color: var(--clickable-items-color);
   border-radius: 9px;
   color: var(--background-color);
-  width: 5vw;
-  height: 4vh;
+  width: 7vw;
+  height: 6vh;
   box-shadow: none;
   border: none;
 }
