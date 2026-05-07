@@ -1,0 +1,30 @@
+
+<form action="/Appointments/UpdateDetails" method="post" class="appointment-form-container">
+    @Html.AntiForgeryToken()
+    <h1 class="main-title">Appointment : Manaf Hujairi</h1>
+    <div class="appointment-split-container">
+        <div class="appointments-inputs-container">
+            <div class="custom-input-container">
+                <div class="custom-input-field">
+                    <label for="Diagnosis">Diagnosis</label>
+                    <input type="text" id="Diagnosis" name="Diagnosis" class="form-control" />
+                    @* <span class="text-danger" asp-validation-for="Diagnosis"></span> *@
+                </div>
+
+                <div class="custom-input-field">
+                    <label for="Prescription">Prescription</label>
+                    <input type="text" id="Prescription" name="Prescription" class="form-control" />
+                </div>
+
+                <div class="custom-input-field">
+                    <label for="Notes">Notes</label>
+                    <input type="text" id="Notes" name="Notes" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="appointment-buttons-container">
+            <button type="submit" class="custom-button">Submit</button>
+            <button type="submit" class="custom-button">Cancel</button>
+        </div>
+    </div>
+</form>
