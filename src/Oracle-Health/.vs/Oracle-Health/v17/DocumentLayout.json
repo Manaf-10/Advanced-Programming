@@ -1,28 +1,7 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\manaf\\advanced-programming\\src\\oracle-health\\oracle-health\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\manaf\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\manaf\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\manaf\\advanced-programming\\src\\oracle-health\\oracle-health\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\manaf\\advanced-programming\\src\\oracle-health\\oracle-health\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "WorkspaceRootPath": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\",
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -30,68 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": -1,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Program.cs",
-              "RelativeDocumentMoniker": "Oracle-Health\\Program.cs",
-              "ToolTip": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Program.cs",
-              "RelativeToolTip": "Oracle-Health\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T07:50:16.713Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "Oracle-Health\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "Oracle-Health\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T07:42:54.47Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "Oracle-Health\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "Oracle-Health\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAADIAAAAAAAAAAAAAAEkAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-07T07:36:58.606Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Oracle-Health\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Oracle-Health\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-07T07:30:21.535Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "Oracle-Health\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\manaf\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "Oracle-Health\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAAOAAAAAAAAAAAAAAAP0AAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-05-07T07:28:16.949Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             }
           ]
         }

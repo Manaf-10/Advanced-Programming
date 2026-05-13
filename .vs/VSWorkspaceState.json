@@ -3,8 +3,11 @@
     "",
     "\\assets",
     "\\src",
-    "\\src\\Oracle-Health"
+    "\\src\\Oracle-Health",
+    "\\src\\Oracle-Health\\Oracle-Health",
+    "\\src\\Oracle-Health\\Oracle-Health\\wwwroot",
+    "\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css"
   ],
-  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health.sln",
+  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css\\site.css",
   "PreviewInSolutionExplorer": false
 }
