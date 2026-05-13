@@ -11,6 +11,6 @@
 
 ## ERD
 
-![erd-image](./assets/erd-image.jpeg)
+![erd-image](./assets/erd_image.png)
 
 ## Routing table [here](https://www.notion.so/Routing-Table-32c1a2392a5e8075935ac7b550635ad6?source=copy_link)
