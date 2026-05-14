@@ -1,0 +1,30 @@
+@model IEnumerable<Oracle_Health.Models.ViewModels.PatientCardViewModel>
+
+@{
+    ViewData["Title"] = "Patients";
+}
+
+<div class="appointments-container">
+    <h1 class="main-title">All Patients</h1>
+    <div class="custom-input-field search-bar">
+        <label for="patient-search">Search</label>
+        <input type="text" id="patient-search" name="patient-search">
+    </div>
+    <div class="patients-grid">
+        @if (!Model.Any())
+        {
+            <p>No patients found.</p>
+        }
+        else
+        {
+            @foreach (var patient in Model)
+            {
+                <div class="patient-card">
+                    <img src="~/images/dummy-user-image.png" alt="user-image">
+                    <p>@patient.FullName</p>
+                    <small>Ref: @patient.PatientReference</small>
+                </div>
+            }
+        }
+    </div>
+</div>

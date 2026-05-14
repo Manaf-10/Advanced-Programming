@@ -1,0 +1,61 @@
+@model Oracle_Health.Models.ViewModels.DoctorIndexViewModel
+
+@{
+    ViewData["Title"] = "Doctors";
+}
+
+<div class="appointments-container">
+    <h1 class="main-title">Doctors</h1>
+
+    @if (!Model.Doctors.Any())
+    {
+        <div class="appointments-cell three-items-cell">
+            <p>No doctors found.</p>
+            <p></p>
+            <p></p>
+        </div>
+    }
+    else
+    {
+        <div class="doctor-grid">
+            @foreach (var doctor in Model.Doctors)
+            {
+                <article class="doctor-card">
+                    <div>
+                        <h2>@doctor.FullName</h2>
+                        <p>@doctor.Email</p>
+                    </div>
+
+                    <div>
+                        <strong>Specializations</strong>
+                        <p>@(doctor.Specializations.Any() ? string.Join(", ", doctor.Specializations) : "Not assigned")</p>
+                    </div>
+
+                    <div>
+                        <strong>Upcoming appointments</strong>
+                        <p>@doctor.UpcomingAppointments</p>
+                    </div>
+
+                    <div>
+                        <strong>Schedule</strong>
+                        @if (!doctor.Schedule.Any())
+                        {
+                            <p>No schedule added.</p>
+                        }
+                        else
+                        {
+                            @foreach (var schedule in doctor.Schedule)
+                            {
+                                <p>
+                                    @schedule.DayOfWeek:
+                                    @schedule.StartTime.ToString("hh:mm tt") - @schedule.EndTime.ToString("hh:mm tt")
+                                    @(schedule.IsOnLeave ? "(Leave)" : "")
+                                </p>
+                            }
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>
