@@ -16,7 +16,7 @@
             </a>
         </div>
         <div class="notifications-image-container">
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity?.IsAuthenticated == true)
             {
                 <img src="~/images/notifications-icon.png" alt="notifications">
             }
@@ -30,7 +30,7 @@
                 <img src="../images/appointments-icon.png" alt="Home">
             </a>
 
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity?.IsAuthenticated == true)
             {
                 @if (User.IsInRole("Admin"))
                 {
@@ -42,6 +42,11 @@
                     <a asp-controller="Appointments" asp-action="Index">
                         <img src="~/images/visit-icon.png" alt="Appointments">
                     </a>
+                }
+
+                @if (User.IsInRole("Doctor") || User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Doctor" asp-action="Index" class="nav-text-link">DR</a>
                 }
 
                 @if (User.IsInRole("Reception") || User.IsInRole("Admin"))

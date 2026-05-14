@@ -246,7 +246,6 @@ C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\scopedcss\bundle\Oracle-Health.styles.css
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\scopedcss\projectbundle\Oracle-Health.bundle.scp.css
-C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-c47wie71ye-c47wie71ye.gz
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\5eyo26w6n3-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\5y3ltvmwmw-{0}-qrfsq6jklz-qrfsq6jklz.gz
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\7lr772kg8h-{0}-w7ge6d586f-w7ge6d586f.gz
@@ -319,10 +318,11 @@ C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.build.endpoints.json
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\swae.build.ex.cache
-C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\Oracle-H.6C731730.Up2Date
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\refint\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\Oracle-Health.pdb
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\Oracle-Health.genruntimeconfig.cache
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\ref\Oracle-Health.dll
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-u1dsn6m4fh-u1dsn6m4fh.gz
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

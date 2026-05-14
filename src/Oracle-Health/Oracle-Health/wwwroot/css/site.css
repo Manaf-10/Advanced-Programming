@@ -156,6 +156,37 @@ nav a img {
   color: #ff2617;
 }
 
+.Missed {
+  color: #b35f00;
+}
+
+.appointment-row-link {
+  text-decoration: none;
+}
+
+.appointment-row-link:hover {
+  background-color: var(--active-item-color);
+}
+
+.appointment-summary {
+  color: var(--secondairy-color);
+  margin-left: 1.5%;
+}
+
+.custom-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.nav-text-link {
+  color: var(--secondairy-color);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
 .appointment-form-container {
   display: flex;
   flex-direction: column;
@@ -270,6 +301,31 @@ form {
 }
 
 .patient-card p {
+}
+
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 0 1.5%;
+  width: 96vw;
+}
+
+.doctor-card {
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--secondairy-color);
+  padding: 18px;
+}
+
+.doctor-card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.doctor-card p {
+  margin-bottom: 8px;
 }
 
 .search-bar {

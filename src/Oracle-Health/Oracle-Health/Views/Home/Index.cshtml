@@ -1,4 +1,6 @@
-﻿@{
+@model IEnumerable<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
+
+@{
     ViewData["Title"] = "Appointments";
 }
 
@@ -10,36 +12,24 @@
         <p>Status</p>
     </div>
     <div class="appointments-container">
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="Requested">Requested</p>
-        </div>
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="In-Progress">In-Progress</p>
-        </div>
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="Confirmed">Confirmed</p>
-        </div>
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="Checked-In">Checked-In</p>
-        </div>
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="Completed">Completed</p>
-        </div>
-        <div class="appointments-cell three-items-cell">
-            <p>Manaf Hujairi</p>
-            <p>Sunday, 26th of February, 2026 | 12:00 PM</p>
-            <p class="Cancelled">Cancelled</p>
-        </div>
+        @if (!Model.Any())
+        {
+            <div class="appointments-cell three-items-cell">
+                <p>No appointments found.</p>
+                <p></p>
+                <p></p>
+            </div>
+        }
+        else
+        {
+            @foreach (var appointment in Model)
+            {
+                <a asp-controller="Appointments" asp-action="Index" asp-route-id="@appointment.Id" class="appointments-cell three-items-cell appointment-row-link">
+                    <p>@appointment.PatientName</p>
+                    <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
+                    <p class="@appointment.Status">@appointment.Status</p>
+                </a>
+            }
+        }
     </div>
 </div>
-
