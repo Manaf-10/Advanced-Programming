@@ -59,6 +59,7 @@ Controllers/
  DoctorController.cs
  HomeController.cs
  PatientsController.cs
+Data/DatabaseSeeder.cs
 Models/
  Appointment.cs
  AppointmentStatus.cs

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Oracle_Health.Data;
 using Oracle_Health.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ builder.Services.AddDbContext<ClinicManagementSystemContext>(options =>
     options.UseSqlServer(connectionString));
 
 var app = builder.Build();
+
+await DatabaseSeeder.SeedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
