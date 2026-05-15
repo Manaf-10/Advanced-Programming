@@ -64,12 +64,16 @@
             }
             else
             {
-                @* Login link for Guests *@
-                <a asp-controller="Account" asp-action="Login">Login</a>
+                <a asp-controller="Account" asp-action="Login" class="nav-text-link">Log in</a>
             }
         </nav>
 
         <main role="main" class="pb-3">
+            @if (TempData["SuccessMessage"] is string successMessage)
+            {
+                <div class="page-alert page-alert-success">@successMessage</div>
+            }
+
             @RenderBody()
         </main>
     </div>

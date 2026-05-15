@@ -1,0 +1,42 @@
+@model Oracle_Health.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<section class="profile-shell">
+    <div class="profile-header">
+        <div>
+            <p class="auth-eyebrow">@Model.Role</p>
+            <h1>@Model.FullName</h1>
+            <p>@Model.Email</p>
+        </div>
+
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="auth-button secondary-button">Sign out</button>
+        </form>
+    </div>
+
+    <div class="profile-grid">
+        <article class="profile-card">
+            <span>Role</span>
+            <strong>@Model.Role</strong>
+        </article>
+
+        @if (Model.PatientReference.HasValue)
+        {
+            <article class="profile-card">
+                <span>Patient reference</span>
+                <strong>@Model.PatientReference</strong>
+            </article>
+        }
+
+        @if (Model.Cpr.HasValue)
+        {
+            <article class="profile-card">
+                <span>CPR</span>
+                <strong>@Model.Cpr</strong>
+            </article>
+        }
+    </div>
+</section>
