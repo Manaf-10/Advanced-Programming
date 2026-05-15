@@ -6,6 +6,7 @@
 
 <div class="appointments-container">
     <h1 class="main-title">All appointments</h1>
+    <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
     <div class="appointments-container-header three-items-cell">
         <p>Patient Name</p>
         <p>Date</p>
@@ -24,12 +25,58 @@
         {
             @foreach (var appointment in Model)
             {
-                <a asp-controller="Appointments" asp-action="Index" asp-route-id="@appointment.Id" class="appointments-cell three-items-cell appointment-row-link">
+                <a asp-controller="Appointments"
+                   asp-action="Index"
+                   asp-route-id="@appointment.Id"
+                   id="appointment-row-@appointment.Id"
+                   class="appointments-cell three-items-cell appointment-row-link"
+                   data-appointment-id="@appointment.Id">
                     <p>@appointment.PatientName</p>
                     <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
-                    <p class="@appointment.Status">@appointment.Status</p>
+                    <p class="appointment-status @appointment.Status">@appointment.Status</p>
                 </a>
             }
         }
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        const liveStatus = document.getElementById("appointment-live-status");
+        const appointmentConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/appointments")
+            .withAutomaticReconnect()
+            .build();
+
+        function setLiveStatus(message, isConnected) {
+            liveStatus.textContent = message;
+            liveStatus.classList.toggle("appointment-live-status-connected", isConnected);
+        }
+
+        appointmentConnection.on("AppointmentStatusChanged", (appointmentId, status) => {
+            const row = document.querySelector(`[data-appointment-id="${appointmentId}"]`);
+            if (!row) {
+                return;
+            }
+
+            const statusCell = row.querySelector(".appointment-status");
+            statusCell.className = `appointment-status ${status}`;
+            statusCell.textContent = status;
+            row.classList.add("appointment-row-updated");
+            window.setTimeout(() => row.classList.remove("appointment-row-updated"), 1800);
+        });
+
+        appointmentConnection.onreconnecting(() => setLiveStatus("Live updates reconnecting...", false));
+        appointmentConnection.onreconnected(() => setLiveStatus("Live updates connected", true));
+        appointmentConnection.onclose(() => setLiveStatus("Live updates disconnected", false));
+
+        appointmentConnection
+            .start()
+            .then(() => setLiveStatus("Live updates connected", true))
+            .catch(error => {
+                console.error(error);
+                setLiveStatus("Live updates failed to connect", false);
+            });
+    </script>
+}

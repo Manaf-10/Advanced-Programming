@@ -60,6 +60,7 @@ Controllers/
  HomeController.cs
  PatientsController.cs
 Data/DatabaseSeeder.cs
+Hubs/AppointmentHub.cs
 Models/
  Appointment.cs
  AppointmentStatus.cs

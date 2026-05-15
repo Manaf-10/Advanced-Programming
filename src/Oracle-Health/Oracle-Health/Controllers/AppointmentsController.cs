@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Oracle_Health.Hubs;
 using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
 
@@ -8,10 +10,14 @@ namespace Oracle_Health.Controllers;
 public class AppointmentsController : Controller
 {
     private readonly ClinicManagementSystemContext _context;
+    private readonly IHubContext<AppointmentHub> _appointmentHub;
 
-    public AppointmentsController(ClinicManagementSystemContext context)
+    public AppointmentsController(
+        ClinicManagementSystemContext context,
+        IHubContext<AppointmentHub> appointmentHub)
     {
         _context = context;
+        _appointmentHub = appointmentHub;
     }
 
     public async Task<IActionResult> Index(long? id)
@@ -88,6 +94,10 @@ public class AppointmentsController : Controller
 
         appointment.Status = AppointmentStatus.Completed;
         await _context.SaveChangesAsync();
+        await _appointmentHub.Clients.All.SendAsync(
+            "AppointmentStatusChanged",
+            appointment.Id,
+            AppointmentStatus.ToDisplayName(appointment.Status));
 
         return RedirectToAction("Index", "Home");
     }

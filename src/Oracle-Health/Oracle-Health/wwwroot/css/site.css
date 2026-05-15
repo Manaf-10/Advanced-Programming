@@ -168,6 +168,21 @@ nav a img {
   background-color: var(--active-item-color);
 }
 
+.appointment-row-updated {
+  background-color: #dcfce7;
+  transition: background-color 0.2s ease;
+}
+
+.appointment-live-status {
+  color: #7a5b18;
+  margin-left: 1.5%;
+  margin-bottom: 12px;
+}
+
+.appointment-live-status-connected {
+  color: #14532d;
+}
+
 .appointment-summary {
   color: var(--secondairy-color);
   margin-left: 1.5%;
