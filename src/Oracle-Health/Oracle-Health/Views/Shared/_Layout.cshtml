@@ -73,6 +73,10 @@
             {
                 <div class="page-alert page-alert-success">@successMessage</div>
             }
+            @if (TempData["ErrorMessage"] is string errorMessage)
+            {
+                <div class="page-alert page-alert-error">@errorMessage</div>
+            }
 
             @RenderBody()
         </main>

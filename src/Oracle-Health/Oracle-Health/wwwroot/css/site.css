@@ -132,6 +132,15 @@ nav a img {
   padding-left: 0.8%;
 }
 
+.appointment-grid-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1.8fr 1fr 1.6fr;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff33;
+  padding: 8px 0.8%;
+}
+
 .Requested {
   color: #918e8e;
 }
@@ -166,6 +175,35 @@ nav a img {
 
 .appointment-row-link:hover {
   background-color: var(--active-item-color);
+}
+
+.appointment-cell-link {
+  color: var(--secondairy-color);
+  text-decoration: none;
+}
+
+.appointment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.appointment-actions form {
+  height: auto;
+}
+
+.appointment-status-button {
+  min-height: 34px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  color: var(--background-color);
+  background-color: var(--clickable-items-color);
+  padding: 0 12px;
+}
+
+.appointment-status-button:hover {
+  cursor: pointer;
+  background-color: var(--secondairy-color);
 }
 
 .appointment-row-updated {
@@ -551,6 +589,12 @@ form {
   color: #14532d;
   background-color: #dcfce7;
   border: 1px solid #86efac;
+}
+
+.page-alert-error {
+  color: #7f1d1d;
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
 }
 
 @media (max-width: 900px) {

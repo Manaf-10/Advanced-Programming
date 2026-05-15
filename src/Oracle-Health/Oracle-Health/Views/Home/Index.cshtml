@@ -7,16 +7,18 @@
 <div class="appointments-container">
     <h1 class="main-title">All appointments</h1>
     <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
-    <div class="appointments-container-header three-items-cell">
+    <div class="appointments-container-header appointment-grid-row">
         <p>Patient Name</p>
         <p>Date</p>
         <p>Status</p>
+        <p>Actions</p>
     </div>
     <div class="appointments-container">
         @if (!Model.Any())
         {
-            <div class="appointments-cell three-items-cell">
+            <div class="appointments-cell appointment-grid-row">
                 <p>No appointments found.</p>
+                <p></p>
                 <p></p>
                 <p></p>
             </div>
@@ -25,16 +27,27 @@
         {
             @foreach (var appointment in Model)
             {
-                <a asp-controller="Appointments"
-                   asp-action="Index"
-                   asp-route-id="@appointment.Id"
-                   id="appointment-row-@appointment.Id"
-                   class="appointments-cell three-items-cell appointment-row-link"
-                   data-appointment-id="@appointment.Id">
-                    <p>@appointment.PatientName</p>
+                <div id="appointment-row-@appointment.Id"
+                     class="appointments-cell appointment-grid-row appointment-row-link"
+                     data-appointment-id="@appointment.Id">
+                    <a asp-controller="Appointments"
+                       asp-action="Index"
+                       asp-route-id="@appointment.Id"
+                       class="appointment-cell-link">@appointment.PatientName</a>
                     <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
                     <p class="appointment-status @appointment.Status">@appointment.Status</p>
-                </a>
+                    <div class="appointment-actions">
+                        @foreach (var action in appointment.StatusActions)
+                        {
+                            <form asp-controller="Appointments" asp-action="UpdateStatus" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@appointment.Id" />
+                                <input type="hidden" name="status" value="@action.Status" />
+                                <button type="submit" class="appointment-status-button">@action.Label</button>
+                            </form>
+                        }
+                    </div>
+                </div>
             }
         }
     </div>
