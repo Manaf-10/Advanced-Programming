@@ -45,7 +45,7 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | Method | Route | Access | Description | Status |
 | --- | --- | --- | --- | --- |
 | GET | `/patients/:id/history` | Staff | Display a patient's full visit history | Not started |
-| GET | `/visit-records/:id` | Staff | Display visit diagnosis, doctor notes, and prescriptions | Not started |
+| GET | `/visit-records/:id` | Staff | Display visit diagnosis, doctor notes, and prescriptions | Implemented for Doctor |
 | POST | `/visit-records` | Doctor | Create a visit record after an appointment is completed | Not started |
 | POST | `/prescriptions` | Doctor | Create a prescription linked to a completed visit | Not started |
 | GET | `/prescriptions/:id` | Staff and the Patient | Display prescription details for an authorized user | Not started |
@@ -55,7 +55,7 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | Method | Route | Access | Description | Status |
 | --- | --- | --- | --- | --- |
 | POST | `/visit-records` | Doctor | Create a new diagnosis or visit record | Not started |
-| GET | `/visit-records` | Doctor | Get the diagnosis form | Not started |
+| GET | `/visit-records` | Doctor | Display visit records for the logged-in doctor's patients | Implemented |
 | GET | `/doctors/:id/availability` | Staff | Display available time slots for a doctor | Not started |
 | GET | `/doctors/:id/appointments` | Staff | Display appointments assigned to a doctor | Not started |
 
