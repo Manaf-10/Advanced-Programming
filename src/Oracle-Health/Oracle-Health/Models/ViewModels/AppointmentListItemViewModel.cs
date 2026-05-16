@@ -11,5 +11,13 @@ public class AppointmentListItemViewModel
     public DateTime Date { get; set; }
 
     public string Status { get; set; } = string.Empty;
+
+    public List<AppointmentStatusActionViewModel> StatusActions { get; set; } = new();
 }
 
+public class AppointmentStatusActionViewModel
+{
+    public int Status { get; set; }
+
+    public string Label { get; set; } = string.Empty;
+}

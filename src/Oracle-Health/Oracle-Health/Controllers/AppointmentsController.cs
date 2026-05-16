@@ -1,5 +1,9 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Oracle_Health.Hubs;
 using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
 
@@ -8,10 +12,14 @@ namespace Oracle_Health.Controllers;
 public class AppointmentsController : Controller
 {
     private readonly ClinicManagementSystemContext _context;
+    private readonly IHubContext<AppointmentHub> _appointmentHub;
 
-    public AppointmentsController(ClinicManagementSystemContext context)
+    public AppointmentsController(
+        ClinicManagementSystemContext context,
+        IHubContext<AppointmentHub> appointmentHub)
     {
         _context = context;
+        _appointmentHub = appointmentHub;
     }
 
     public async Task<IActionResult> Index(long? id)
@@ -45,16 +53,60 @@ public class AppointmentsController : Controller
     }
 
     [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateStatus(long id, int status)
+    {
+        var appointment = await _context.Appointments
+            .Include(item => item.Doctor)
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        if (appointment is null)
+        {
+            return NotFound();
+        }
+
+        if (!AppointmentStatus.CanTransition(appointment.Status, status))
+        {
+            TempData["ErrorMessage"] = "That appointment status change is not allowed.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        if (!CanCurrentUserSetStatus(appointment, status))
+        {
+            return Forbid();
+        }
+
+        appointment.Status = status;
+        await _context.SaveChangesAsync();
+        await BroadcastStatusChange(appointment);
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Doctor")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateDetails(AppointmentVisitFormViewModel model)
     {
         var appointment = await _context.Appointments
+            .Include(item => item.Doctor)
             .Include(item => item.Visit)
             .FirstOrDefaultAsync(item => item.Id == model.AppointmentId);
 
         if (appointment is null)
         {
             return NotFound();
+        }
+
+        if (!CanCurrentDoctorCompleteVisit(appointment))
+        {
+            return Forbid();
+        }
+
+        if (appointment.Status != AppointmentStatus.InProgress)
+        {
+            ModelState.AddModelError(string.Empty, "Start the appointment before completing the visit record.");
         }
 
         if (!ModelState.IsValid)
@@ -88,6 +140,7 @@ public class AppointmentsController : Controller
 
         appointment.Status = AppointmentStatus.Completed;
         await _context.SaveChangesAsync();
+        await BroadcastStatusChange(appointment);
 
         return RedirectToAction("Index", "Home");
     }
@@ -110,5 +163,50 @@ public class AppointmentsController : Controller
         model.PatientName = $"{details.Patient.User.FirstName} {details.Patient.User.LastName}";
         model.DoctorName = $"{details.Doctor.User.FirstName} {details.Doctor.User.LastName}";
         model.AppointmentDate = details.Date;
+    }
+
+    private bool CanCurrentUserSetStatus(Appointment appointment, int nextStatus)
+    {
+        if (User.IsInRole("Admin"))
+        {
+            return nextStatus is AppointmentStatus.Confirmed
+                or AppointmentStatus.Cancelled
+                or AppointmentStatus.Missed;
+        }
+
+        if (User.IsInRole("Reception"))
+        {
+            return nextStatus is AppointmentStatus.Confirmed
+                or AppointmentStatus.CheckedIn
+                or AppointmentStatus.Cancelled
+                or AppointmentStatus.Missed;
+        }
+
+        if (User.IsInRole("Doctor") && nextStatus == AppointmentStatus.InProgress)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return long.TryParse(userIdClaim, out var userId) && appointment.Doctor.UserId == userId;
+        }
+
+        return false;
+    }
+
+    private bool CanCurrentDoctorCompleteVisit(Appointment appointment)
+    {
+        if (!User.IsInRole("Doctor"))
+        {
+            return false;
+        }
+
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return long.TryParse(userIdClaim, out var userId) && appointment.Doctor.UserId == userId;
+    }
+
+    private async Task BroadcastStatusChange(Appointment appointment)
+    {
+        await _appointmentHub.Clients.All.SendAsync(
+            "AppointmentStatusChanged",
+            appointment.Id,
+            AppointmentStatus.ToDisplayName(appointment.Status));
     }
 }

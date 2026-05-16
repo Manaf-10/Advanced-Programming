@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Oracle_Health.Models;
@@ -35,7 +36,8 @@ namespace Oracle_Health.Controllers
                     PatientName = appointment.Patient.User.FirstName + " " + appointment.Patient.User.LastName,
                     DoctorName = appointment.Doctor.User.FirstName + " " + appointment.Doctor.User.LastName,
                     Date = appointment.Date,
-                    Status = AppointmentStatus.ToDisplayName(appointment.Status)
+                    Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                    StatusActions = GetVisibleStatusActions(appointment)
                 })
                 .ToList();
 
@@ -51,6 +53,44 @@ namespace Oracle_Health.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private List<AppointmentStatusActionViewModel> GetVisibleStatusActions(Appointment appointment)
+        {
+            return AppointmentStatus.GetAllowedNextStatuses(appointment.Status)
+                .Where(nextStatus => CanCurrentUserSetStatus(appointment, nextStatus))
+                .Select(nextStatus => new AppointmentStatusActionViewModel
+                {
+                    Status = nextStatus,
+                    Label = AppointmentStatus.ToActionLabel(nextStatus)
+                })
+                .ToList();
+        }
+
+        private bool CanCurrentUserSetStatus(Appointment appointment, int nextStatus)
+        {
+            if (User.IsInRole("Admin"))
+            {
+                return nextStatus is AppointmentStatus.Confirmed
+                    or AppointmentStatus.Cancelled
+                    or AppointmentStatus.Missed;
+            }
+
+            if (User.IsInRole("Reception"))
+            {
+                return nextStatus is AppointmentStatus.Confirmed
+                    or AppointmentStatus.CheckedIn
+                    or AppointmentStatus.Cancelled
+                    or AppointmentStatus.Missed;
+            }
+
+            if (User.IsInRole("Doctor") && nextStatus == AppointmentStatus.InProgress)
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                return long.TryParse(userIdClaim, out var userId) && appointment.Doctor.UserId == userId;
+            }
+
+            return false;
         }
     }
 }

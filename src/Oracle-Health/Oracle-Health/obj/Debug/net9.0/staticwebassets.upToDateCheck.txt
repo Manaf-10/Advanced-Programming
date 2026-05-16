@@ -68,6 +68,7 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\lib\signalr\dist\browser\signalr.min.js
 wwwroot\oracle-sans\demo.html
 wwwroot\oracle-sans\OracleSans-Bold.eot
 wwwroot\oracle-sans\OracleSans-Bold.ttf
@@ -184,3 +185,4 @@ C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\cs
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\oracle-sans\stylesheet.css
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\images\user-pfp.svg
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\images\logo.svg
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\wwwroot\lib\signalr\dist\browser\signalr.min.js

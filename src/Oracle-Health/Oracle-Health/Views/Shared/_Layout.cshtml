@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] - Oracle Health</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -18,58 +17,176 @@
         <div class="notifications-image-container">
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <img src="~/images/notifications-icon.png" alt="notifications">
+                <a href="/notifications" title="Notifications">
+                    <img src="~/images/notifications-icon.png" alt="notifications">
+                </a>
             }
         </div>
     </header>
 
     <div class="main-container">
         <nav>
-            @* Guest / Default Items *@
-            <a asp-controller="Home" asp-action="Index">
-                <img src="../images/appointments-icon.png" alt="Home">
+            @{
+                var isAuthenticated = User.Identity?.IsAuthenticated == true;
+                var isPatient = User.IsInRole("Patient");
+                var isDoctor = User.IsInRole("Doctor");
+                var isReceptionist = User.IsInRole("Reception");
+                var isClinicManager = User.IsInRole("Admin");
+            }
+
+            <a asp-controller="Home" asp-action="Index" class="nav-link-item">
+                <img src="~/images/appointments-icon.png" alt="">
+                <span>Home</span>
             </a>
 
-            @if (User.Identity?.IsAuthenticated == true)
+            @if (isAuthenticated)
             {
-                @if (User.IsInRole("Admin"))
+                @if (isPatient)
                 {
-                    <a asp-controller="Admin" asp-action="Dashboard">Admin Tool</a>
-                }
-
-                @if (User.IsInRole("Doctor") || User.IsInRole("Reception"))
-                {
-                    <a asp-controller="Appointments" asp-action="Index">
-                        <img src="~/images/visit-icon.png" alt="Appointments">
+                    <a href="/appointments/book" class="nav-link-item">
+                        <img src="~/images/visit-icon.png" alt="">
+                        <span>Book</span>
+                    </a>
+                    <a href="/appointments" class="nav-link-item">
+                        <img src="~/images/appointments-icon.png" alt="">
+                        <span>Appointments</span>
+                    </a>
+                    <a href="/patients/history" class="nav-link-item">
+                        <img src="~/images/patients.png" alt="">
+                        <span>History</span>
+                    </a>
+                    <a href="/prescriptions" class="nav-link-item">
+                        <span>Rx</span>
+                        <span>Prescriptions</span>
                     </a>
                 }
 
-                @if (User.IsInRole("Doctor") || User.IsInRole("Admin"))
+                @if (isDoctor)
                 {
-                    <a asp-controller="Doctor" asp-action="Index" class="nav-text-link">DR</a>
-                }
-
-                @if (User.IsInRole("Reception") || User.IsInRole("Admin"))
-                {
-                    <a asp-controller="Patients" asp-action="List">
-                        <img src="~/images/patients.png" alt="Patients">
+                    <a href="/doctors/me/appointments" class="nav-link-item">
+                        <img src="~/images/appointments-icon.png" alt="">
+                        <span>My Appointments</span>
+                    </a>
+                    <a href="/appointments/live" class="nav-link-item">
+                        <img src="~/images/visit-icon.png" alt="">
+                        <span>Live Board</span>
+                    </a>
+                    <a href="/visit-records" class="nav-link-item">
+                        <span>VR</span>
+                        <span>Visit Records</span>
+                    </a>
+                    <a href="/patients" class="nav-link-item">
+                        <img src="~/images/patients.png" alt="">
+                        <span>Patients</span>
+                    </a>
+                    <a href="/prescriptions" class="nav-link-item">
+                        <span>Rx</span>
+                        <span>Prescriptions</span>
+                    </a>
+                    <a href="/doctors/me/availability" class="nav-link-item">
+                        <span>AV</span>
+                        <span>Availability</span>
                     </a>
                 }
+
+                @if (isReceptionist)
+                {
+                    <a href="/appointments/book" class="nav-link-item">
+                        <img src="~/images/visit-icon.png" alt="">
+                        <span>Book</span>
+                    </a>
+                    <a href="/appointments" class="nav-link-item">
+                        <img src="~/images/appointments-icon.png" alt="">
+                        <span>Appointments</span>
+                    </a>
+                    <a href="/appointments/live" class="nav-link-item">
+                        <span>LB</span>
+                        <span>Live Board</span>
+                    </a>
+                    <a asp-controller="Doctor" asp-action="Index" class="nav-link-item">
+                        <span>DR</span>
+                        <span>Doctors</span>
+                    </a>
+                    <a asp-controller="Patients" asp-action="List" class="nav-link-item">
+                        <img src="~/images/patients.png" alt="">
+                        <span>Patients</span>
+                    </a>
+                }
+
+                @if (isClinicManager)
+                {
+                    <a asp-controller="Doctor" asp-action="Index" class="nav-link-item">
+                        <span>DR</span>
+                        <span>Doctors</span>
+                    </a>
+                    <a href="/specializations" class="nav-link-item">
+                        <span>SP</span>
+                        <span>Specializations</span>
+                    </a>
+                    <a href="/appointments" class="nav-link-item">
+                        <img src="~/images/appointments-icon.png" alt="">
+                        <span>Appointments</span>
+                    </a>
+                    <a href="/appointments/live" class="nav-link-item">
+                        <span>LB</span>
+                        <span>Live Board</span>
+                    </a>
+                    <a href="/reports/statistics" class="nav-link-item">
+                        <span>ST</span>
+                        <span>Statistics</span>
+                    </a>
+                    <a href="/reports/doctor-workload" class="nav-link-item">
+                        <span>RW</span>
+                        <span>Workload</span>
+                    </a>
+                    <a href="/reports/cancellations" class="nav-link-item">
+                        <span>RC</span>
+                        <span>Cancellations</span>
+                    </a>
+                }
+
+                <a href="/notifications" class="nav-link-item">
+                    <img src="~/images/notifications-icon.png" alt="">
+                    <span>Notifications</span>
+                </a>
 
                 <div class="profile-section">
-                    <a asp-controller="Account" asp-action="Profile" class="profile-link">
-                        <img src="~/images/user-pfp.svg" alt="profile">
+                    <a asp-controller="Account" asp-action="Profile" class="nav-link-item profile-link">
+                        <img src="~/images/user-pfp.svg" alt="">
+                        <span>Profile</span>
                     </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="nav-logout-form">
+                        <button type="submit" class="nav-link-item nav-button-link">Logout</button>
+                    </form>
                 </div>
             }
             else
             {
-                @* Login link for Guests *@
-                <a asp-controller="Account" asp-action="Login">Login</a>
+                <a href="/public/appointments/lookup" class="nav-link-item">
+                    <span>LU</span>
+                    <span>Lookup</span>
+                </a>
+                <a asp-controller="Account" asp-action="Login" class="nav-link-item">
+                    <span>IN</span>
+                    <span>Log in</span>
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="nav-link-item">
+                    <span>+</span>
+                    <span>Register</span>
+                </a>
             }
         </nav>
 
         <main role="main" class="pb-3">
+            @if (TempData["SuccessMessage"] is string successMessage)
+            {
+                <div class="page-alert page-alert-success">@successMessage</div>
+            }
+            @if (TempData["ErrorMessage"] is string errorMessage)
+            {
+                <div class="page-alert page-alert-error">@errorMessage</div>
+            }
+
             @RenderBody()
         </main>
     </div>
