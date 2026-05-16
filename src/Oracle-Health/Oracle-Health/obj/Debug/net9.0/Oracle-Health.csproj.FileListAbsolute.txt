@@ -343,5 +343,5 @@ C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.deps.
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.runtimeconfig.json
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.pdb
-C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-9y0cfcaccz-9y0cfcaccz.gz
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
