@@ -80,9 +80,9 @@
                                             }
                                         </div>
                                         <form asp-controller="Notifications"
-                                              asp-action="Delete"
-                                              asp-route-id="@notification.Id"
-                                              method="post">
+                                                asp-action="Delete"
+                                                asp-route-id="@notification.Id"
+                                                method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="notification-delete-button" aria-label="Delete notification">Delete</button>
                                         </form>
