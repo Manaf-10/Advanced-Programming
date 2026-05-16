@@ -1,43 +1,95 @@
-@model Oracle_Health.Models.ViewModels.AppointmentVisitFormViewModel
+@model IEnumerable<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
 
 @{
-    ViewData["Title"] = "Appointment";
+    ViewData["Title"] = "Appointments";
 }
 
-<form asp-controller="Appointments" asp-action="UpdateDetails" method="post" class="appointment-form-container">
-    @Html.AntiForgeryToken()
-    <input asp-for="AppointmentId" type="hidden" />
-    <h1 class="main-title">Appointment : @Model.PatientName</h1>
-    <p class="appointment-summary">
-        Dr. @Model.DoctorName - @Model.AppointmentDate.ToString("dddd, dd MMMM yyyy | hh:mm tt")
-    </p>
-    <div class="appointment-split-container">
-        <div class="appointments-inputs-container">
-            <div class="custom-input-container">
-                <div class="custom-input-field">
-                    <label asp-for="Diagnosis"></label>
-                    <input asp-for="Diagnosis" class="form-control" />
-                    <span class="text-danger" asp-validation-for="Diagnosis"></span>
-                </div>
-
-                <div class="custom-input-field">
-                    <label asp-for="Prescription"></label>
-                    <input asp-for="Prescription" class="form-control" />
-                </div>
-
-                <div class="custom-input-field">
-                    <label asp-for="Notes"></label>
-                    <input asp-for="Notes" class="form-control" />
-                </div>
-            </div>
-        </div>
-        <div class="appointment-buttons-container">
-            <button type="submit" class="custom-button">Submit</button>
-            <a asp-controller="Home" asp-action="Index" class="custom-button custom-link-button">Cancel</a>
-        </div>
+<div class="appointments-container">
+    <h1 class="main-title">Appointments</h1>
+    <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
+    <div class="appointments-container-header appointment-grid-row">
+        <p>Patient Name</p>
+        <p>Date</p>
+        <p>Status</p>
+        <p>Actions</p>
     </div>
-</form>
+    <div class="appointments-container">
+        @if (!Model.Any())
+        {
+            <div class="appointments-cell appointment-grid-row">
+                <p>No appointments found.</p>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+        }
+        else
+        {
+            @foreach (var appointment in Model)
+            {
+                <div id="appointment-row-@appointment.Id"
+                     class="appointments-cell appointment-grid-row appointment-row-link"
+                     data-appointment-id="@appointment.Id">
+                    <a asp-controller="Appointments"
+                       asp-action="Details"
+                       asp-route-id="@appointment.Id"
+                       class="appointment-cell-link">@appointment.PatientName</a>
+                    <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
+                    <p class="appointment-status @appointment.Status">@appointment.Status</p>
+                    <div class="appointment-actions">
+                        @foreach (var action in appointment.StatusActions)
+                        {
+                            <form asp-controller="Appointments" asp-action="UpdateStatus" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@appointment.Id" />
+                                <input type="hidden" name="status" value="@action.Status" />
+                                <button type="submit" class="appointment-status-button">@action.Label</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        const liveStatus = document.getElementById("appointment-live-status");
+        const appointmentConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/appointments")
+            .withAutomaticReconnect()
+            .build();
+
+        function setLiveStatus(message, isConnected) {
+            liveStatus.textContent = message;
+            liveStatus.classList.toggle("appointment-live-status-connected", isConnected);
+        }
+
+        appointmentConnection.on("AppointmentStatusChanged", (appointmentId, status) => {
+            const row = document.querySelector(`[data-appointment-id="${appointmentId}"]`);
+            if (!row) {
+                return;
+            }
+
+            const statusCell = row.querySelector(".appointment-status");
+            statusCell.className = `appointment-status ${status}`;
+            statusCell.textContent = status;
+            row.classList.add("appointment-row-updated");
+            window.setTimeout(() => row.classList.remove("appointment-row-updated"), 1800);
+        });
+
+        appointmentConnection.onreconnecting(() => setLiveStatus("Live updates reconnecting...", false));
+        appointmentConnection.onreconnected(() => setLiveStatus("Live updates connected", true));
+        appointmentConnection.onclose(() => setLiveStatus("Live updates disconnected", false));
+
+        appointmentConnection
+            .start()
+            .then(() => setLiveStatus("Live updates connected", true))
+            .catch(error => {
+                console.error(error);
+                setLiveStatus("Live updates failed to connect", false);
+            });
+    </script>
 }

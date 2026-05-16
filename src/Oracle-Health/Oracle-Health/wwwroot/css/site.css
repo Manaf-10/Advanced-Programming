@@ -113,25 +113,130 @@ nav a {
 }
 
 .notifications-image-container {
-  aspect-ratio: 1/1;
-  object-fit: contain;
   width: 50%;
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
   padding-right: 15px;
-  padding-top: 5px;
 }
 
 .notifications-image-container img {
-  height: 80%;
-  aspect-ratio: 1/1;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
 }
 
-.notifications-image-container a {
-  height: 100%;
+.notification-dropdown {
+  position: relative;
+}
+
+.notification-trigger {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.notification-trigger:hover,
+.notification-trigger:focus {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.notification-count {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  min-width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #ffffff;
+  background-color: #b42318;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.notification-menu {
+  width: min(360px, calc(100vw - 24px));
+  max-height: 70vh;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+}
+
+.notification-menu-header {
+  min-height: 48px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--secondairy-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notification-menu-header form,
+.notification-item form {
+  height: auto;
+}
+
+.notification-clear-button,
+.notification-delete-button {
+  border: 0;
+  color: var(--clickable-items-color);
+  background: transparent;
+  font-size: 0.84rem;
+  padding: 4px 0;
+}
+
+.notification-clear-button:hover,
+.notification-delete-button:hover {
+  color: var(--secondairy-color);
+  text-decoration: underline;
+}
+
+.notification-empty {
+  margin: 0;
+  padding: 18px 14px;
+  color: #4d6770;
+}
+
+.notification-stack {
+  max-height: calc(70vh - 49px);
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--secondairy-color);
+  border-bottom: 1px solid #e4e0dc;
+}
+
+.notification-item:last-child {
+  border-bottom: 0;
+}
+
+.notification-item p {
+  margin: 0 0 6px 0;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.notification-item span {
+  color: #687f87;
+  font-size: 0.78rem;
 }
 
 .logo-image-container {
@@ -423,6 +528,64 @@ form {
   align-self: center;
 }
 
+.home-shell {
+  width: calc(100vw - 220px);
+  min-height: 94vh;
+  color: var(--secondairy-color);
+  padding: 36px 1.5%;
+}
+
+.home-header {
+  max-width: 780px;
+  padding-bottom: 28px;
+}
+
+.home-header h1 {
+  font-size: 2rem;
+  margin: 8px 0 12px 0;
+}
+
+.home-header p {
+  color: #4d6770;
+  max-width: 680px;
+}
+
+.home-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 360px));
+  gap: 16px;
+}
+
+.home-action-card {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  color: var(--secondairy-color);
+  text-decoration: none;
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.home-action-card:hover,
+.home-action-card:focus {
+  color: var(--secondairy-color);
+  background-color: var(--active-item-color);
+}
+
+.home-action-card span {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.home-action-card strong {
+  color: #4d6770;
+  font-weight: 500;
+}
+
 .auth-shell,
 .profile-shell {
   width: calc(100vw - 220px);
@@ -638,6 +801,7 @@ form {
   }
 
   .auth-shell,
+  .home-shell,
   .profile-shell {
     width: calc(100vw - 56px);
     padding: 16px;
@@ -672,6 +836,7 @@ form {
   }
 
   .auth-grid,
+  .home-actions,
   .profile-grid {
     grid-template-columns: 1fr;
   }

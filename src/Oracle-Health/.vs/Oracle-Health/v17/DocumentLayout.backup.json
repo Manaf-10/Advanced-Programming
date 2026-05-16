@@ -11,10 +11,6 @@
       "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\e3gamez\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\e3gamez\\advanced-programming\\src\\oracle-health\\oracle-health\\controllers\\patientscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\controllers\\patientscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -42,14 +38,6 @@
       "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\e3gamez\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\appointment\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\appointment\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\e3gamez\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\appointment\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\appointment\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|c:\\users\\e3gamez\\advanced-programming\\src\\oracle-health\\oracle-health\\views\\doctor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{23C6F90F-0BF4-424B-B30C-1428D97E1E1A}|Oracle-Health\\Oracle-Health.csproj|solutionrelative:oracle-health\\views\\doctor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
@@ -69,7 +57,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "PatientsController.cs",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Controllers\\PatientsController.cs",
               "RelativeDocumentMoniker": "Oracle-Health\\Controllers\\PatientsController.cs",
@@ -81,7 +69,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -93,7 +81,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "_ValidationScriptsPartial.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
@@ -130,19 +118,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "Oracle-Health\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "Oracle-Health\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-15T11:35:40.449Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "Error.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Shared\\Error.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\Shared\\Error.cshtml",
@@ -154,7 +130,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 7,
               "Title": "_ViewImports.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\_ViewImports.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\_ViewImports.cshtml",
@@ -166,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "_ViewStart.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\_ViewStart.cshtml",
@@ -178,7 +154,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\Shared\\_Layout.cshtml",
@@ -190,31 +166,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Appointment\\Index.cshtml",
-              "RelativeDocumentMoniker": "Oracle-Health\\Views\\Appointment\\Index.cshtml",
-              "ToolTip": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Appointment\\Index.cshtml",
-              "RelativeToolTip": "Oracle-Health\\Views\\Appointment\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-14T21:14:31.325Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Appointment\\Details.cshtml",
-              "RelativeDocumentMoniker": "Oracle-Health\\Views\\Appointment\\Details.cshtml",
-              "ToolTip": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Appointment\\Details.cshtml",
-              "RelativeToolTip": "Oracle-Health\\Views\\Appointment\\Details.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-14T21:14:28.479Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 9,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\e3gamez\\Advanced-Programming\\src\\Oracle-Health\\Oracle-Health\\Views\\Doctor\\Index.cshtml",
               "RelativeDocumentMoniker": "Oracle-Health\\Views\\Doctor\\Index.cshtml",

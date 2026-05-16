@@ -1,4 +1,23 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using Microsoft.EntityFrameworkCore
+@inject Oracle_Health.Models.ClinicManagementSystemContext DbContext
+
+@{
+    var layoutIsAuthenticated = User.Identity?.IsAuthenticated == true;
+    var layoutNotifications = new List<Oracle_Health.Models.Notification>();
+
+    if (layoutIsAuthenticated && long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var layoutUserId))
+    {
+        layoutNotifications = await DbContext.Notifications
+            .AsNoTracking()
+            .Where(notification => notification.UserId == layoutUserId)
+            .OrderByDescending(notification => notification.CreatedAt)
+            .Take(8)
+            .ToListAsync();
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,11 +34,64 @@
             </a>
         </div>
         <div class="notifications-image-container">
-            @if (User.Identity?.IsAuthenticated == true)
+            @if (layoutIsAuthenticated)
             {
-                <a href="/notifications" title="Notifications">
-                    <img src="~/images/notifications-icon.png" alt="notifications">
-                </a>
+                <div class="dropdown notification-dropdown">
+                    <button class="notification-trigger"
+                            type="button"
+                            id="notificationMenuButton"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside"
+                            aria-expanded="false"
+                            title="Notifications">
+                        <img src="~/images/notifications-icon.png" alt="notifications">
+                        @if (layoutNotifications.Any())
+                        {
+                            <span class="notification-count">@layoutNotifications.Count</span>
+                        }
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end notification-menu" aria-labelledby="notificationMenuButton">
+                        <div class="notification-menu-header">
+                            <strong>Notifications</strong>
+                            @if (layoutNotifications.Any())
+                            {
+                                <form asp-controller="Notifications" asp-action="Clear" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="notification-clear-button">Clear all</button>
+                                </form>
+                            }
+                        </div>
+
+                        @if (!layoutNotifications.Any())
+                        {
+                            <p class="notification-empty">No notifications.</p>
+                        }
+                        else
+                        {
+                            <div class="notification-stack">
+                                @foreach (var notification in layoutNotifications)
+                                {
+                                    <div class="notification-item">
+                                        <div>
+                                            <p>@notification.Message</p>
+                                            @if (notification.CreatedAt.HasValue)
+                                            {
+                                                <span>@notification.CreatedAt.Value.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                            }
+                                        </div>
+                                        <form asp-controller="Notifications"
+                                              asp-action="Delete"
+                                              asp-route-id="@notification.Id"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="notification-delete-button" aria-label="Delete notification">Delete</button>
+                                        </form>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
             }
         </div>
     </header>
@@ -27,7 +99,7 @@
     <div class="main-container">
         <nav>
             @{
-                var isAuthenticated = User.Identity?.IsAuthenticated == true;
+                var isAuthenticated = layoutIsAuthenticated;
                 var isPatient = User.IsInRole("Patient");
                 var isDoctor = User.IsInRole("Doctor");
                 var isReceptionist = User.IsInRole("Reception");
@@ -144,11 +216,6 @@
                         <span>Cancellations</span>
                     </a>
                 }
-
-                <a href="/notifications" class="nav-link-item">
-                    <img src="~/images/notifications-icon.png" alt="">
-                    <span>Notifications</span>
-                </a>
 
                 <div class="profile-section">
                     <a asp-controller="Account" asp-action="Profile" class="nav-link-item profile-link">

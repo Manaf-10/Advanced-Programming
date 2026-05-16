@@ -1,0 +1,43 @@
+@model Oracle_Health.Models.ViewModels.AppointmentVisitFormViewModel
+
+@{
+    ViewData["Title"] = "Appointment";
+}
+
+<form asp-controller="Appointments" asp-action="UpdateDetails" method="post" class="appointment-form-container">
+    @Html.AntiForgeryToken()
+    <input asp-for="AppointmentId" type="hidden" />
+    <h1 class="main-title">Appointment : @Model.PatientName</h1>
+    <p class="appointment-summary">
+        Dr. @Model.DoctorName - @Model.AppointmentDate.ToString("dddd, dd MMMM yyyy | hh:mm tt")
+    </p>
+    <div class="appointment-split-container">
+        <div class="appointments-inputs-container">
+            <div class="custom-input-container">
+                <div class="custom-input-field">
+                    <label asp-for="Diagnosis"></label>
+                    <input asp-for="Diagnosis" class="form-control" />
+                    <span class="text-danger" asp-validation-for="Diagnosis"></span>
+                </div>
+
+                <div class="custom-input-field">
+                    <label asp-for="Prescription"></label>
+                    <input asp-for="Prescription" class="form-control" />
+                </div>
+
+                <div class="custom-input-field">
+                    <label asp-for="Notes"></label>
+                    <input asp-for="Notes" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="appointment-buttons-container">
+            <button type="submit" class="custom-button">Submit</button>
+            <a asp-controller="Appointments" asp-action="Index" class="custom-button custom-link-button">Cancel</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

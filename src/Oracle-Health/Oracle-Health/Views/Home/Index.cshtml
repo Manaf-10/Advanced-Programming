@@ -1,95 +1,86 @@
-@model IEnumerable<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
-
 @{
-    ViewData["Title"] = "Appointments";
+    ViewData["Title"] = "Home";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var roleName = User.IsInRole("Admin")
+        ? "Clinic Manager"
+        : User.IsInRole("Reception")
+            ? "Receptionist"
+            : User.IsInRole("Doctor")
+                ? "Doctor"
+                : User.IsInRole("Patient")
+                    ? "Patient"
+                    : "Guest";
 }
 
-<div class="appointments-container">
-    <h1 class="main-title">All appointments</h1>
-    <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
-    <div class="appointments-container-header appointment-grid-row">
-        <p>Patient Name</p>
-        <p>Date</p>
-        <p>Status</p>
-        <p>Actions</p>
+<section class="home-shell">
+    <div class="home-header">
+        <span class="auth-eyebrow">Oracle Health</span>
+        <h1>Welcome@(isAuthenticated ? $", {User.Identity?.Name}" : "")</h1>
+        <p>
+            @(isAuthenticated
+                ? $"You are signed in as {roleName}. Use the navigation to open your clinic workspace."
+                : "Use public lookup to check appointment information, or sign in to access your clinic workspace.")
+        </p>
     </div>
-    <div class="appointments-container">
-        @if (!Model.Any())
+
+    <div class="home-actions">
+        @if (isAuthenticated)
         {
-            <div class="appointments-cell appointment-grid-row">
-                <p>No appointments found.</p>
-                <p></p>
-                <p></p>
-                <p></p>
-            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="/reports/statistics" class="home-action-card">
+                    <span>Reports</span>
+                    <strong>Review clinic performance and appointment trends.</strong>
+                </a>
+                <a asp-controller="Doctor" asp-action="Index" class="home-action-card">
+                    <span>Doctors</span>
+                    <strong>Manage doctor profiles, workload, and schedules.</strong>
+                </a>
+            }
+            else if (User.IsInRole("Reception"))
+            {
+                <a href="/appointments" class="home-action-card">
+                    <span>Appointments</span>
+                    <strong>Confirm bookings, check in patients, and monitor the queue.</strong>
+                </a>
+                <a asp-controller="Patients" asp-action="List" class="home-action-card">
+                    <span>Patients</span>
+                    <strong>Find patient records and appointment history.</strong>
+                </a>
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                <a href="/appointments" class="home-action-card">
+                    <span>Appointments</span>
+                    <strong>Open assigned appointments and complete visit records.</strong>
+                </a>
+                <a href="/visit-records" class="home-action-card">
+                    <span>Visit Records</span>
+                    <strong>Review diagnoses, notes, and prescriptions.</strong>
+                </a>
+            }
+            else
+            {
+                <a href="/appointments/book" class="home-action-card">
+                    <span>Book Appointment</span>
+                    <strong>Choose a doctor, specialization, date, and time.</strong>
+                </a>
+                <a href="/patients/history" class="home-action-card">
+                    <span>Visit History</span>
+                    <strong>Review your completed visits and prescriptions.</strong>
+                </a>
+            }
         }
         else
         {
-            @foreach (var appointment in Model)
-            {
-                <div id="appointment-row-@appointment.Id"
-                     class="appointments-cell appointment-grid-row appointment-row-link"
-                     data-appointment-id="@appointment.Id">
-                    <a asp-controller="Appointments"
-                       asp-action="Index"
-                       asp-route-id="@appointment.Id"
-                       class="appointment-cell-link">@appointment.PatientName</a>
-                    <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
-                    <p class="appointment-status @appointment.Status">@appointment.Status</p>
-                    <div class="appointment-actions">
-                        @foreach (var action in appointment.StatusActions)
-                        {
-                            <form asp-controller="Appointments" asp-action="UpdateStatus" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@appointment.Id" />
-                                <input type="hidden" name="status" value="@action.Status" />
-                                <button type="submit" class="appointment-status-button">@action.Label</button>
-                            </form>
-                        }
-                    </div>
-                </div>
-            }
+            <a href="/public/appointments/lookup" class="home-action-card">
+                <span>Public Lookup</span>
+                <strong>Check upcoming appointments using CPR and patient reference.</strong>
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="home-action-card">
+                <span>Sign In</span>
+                <strong>Access your role-based clinic tools.</strong>
+            </a>
         }
     </div>
-</div>
-
-@section Scripts {
-    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-    <script>
-        const liveStatus = document.getElementById("appointment-live-status");
-        const appointmentConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/hubs/appointments")
-            .withAutomaticReconnect()
-            .build();
-
-        function setLiveStatus(message, isConnected) {
-            liveStatus.textContent = message;
-            liveStatus.classList.toggle("appointment-live-status-connected", isConnected);
-        }
-
-        appointmentConnection.on("AppointmentStatusChanged", (appointmentId, status) => {
-            const row = document.querySelector(`[data-appointment-id="${appointmentId}"]`);
-            if (!row) {
-                return;
-            }
-
-            const statusCell = row.querySelector(".appointment-status");
-            statusCell.className = `appointment-status ${status}`;
-            statusCell.textContent = status;
-            row.classList.add("appointment-row-updated");
-            window.setTimeout(() => row.classList.remove("appointment-row-updated"), 1800);
-        });
-
-        appointmentConnection.onreconnecting(() => setLiveStatus("Live updates reconnecting...", false));
-        appointmentConnection.onreconnected(() => setLiveStatus("Live updates connected", true));
-        appointmentConnection.onclose(() => setLiveStatus("Live updates disconnected", false));
-
-        appointmentConnection
-            .start()
-            .then(() => setLiveStatus("Live updates connected", true))
-            .catch(error => {
-                console.error(error);
-                setLiveStatus("Live updates failed to connect", false);
-            });
-    </script>
-}
+</section>
