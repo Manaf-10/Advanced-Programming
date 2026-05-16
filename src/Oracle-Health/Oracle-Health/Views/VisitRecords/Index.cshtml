@@ -1,0 +1,48 @@
+@model IEnumerable<Oracle_Health.Models.ViewModels.VisitRecordListItemViewModel>
+
+@{
+    ViewData["Title"] = "Visit Records";
+}
+
+<div class="visit-records-container">
+    <h1 class="main-title">Visit Records</h1>
+    <p class="appointment-summary">Records for patients assigned to your appointments.</p>
+
+    <div class="visit-record-table">
+    <div class="visit-record-table-header visit-record-grid-row">
+        <p>Patient</p>
+        <p>Date</p>
+        <p>Prescription</p>
+        <p></p>
+    </div>
+
+    <div>
+        @if (!Model.Any())
+        {
+            <div class="visit-record-row visit-record-grid-row">
+                <p>No visit records found.</p>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+        }
+        else
+        {
+            @foreach (var visit in Model)
+            {
+                <div class="visit-record-row visit-record-grid-row">
+                    <p>@visit.PatientName</p>
+                    <p>@visit.AppointmentDate.ToString("dd MMM yyyy")</p>
+                    <p>@(string.IsNullOrWhiteSpace(visit.Prescription) ? "None" : visit.Prescription)</p>
+                    <p>
+                        <a asp-controller="VisitRecords"
+                           asp-action="Details"
+                           asp-route-id="@visit.Id"
+                           class="nav-text-link">Open</a>
+                    </p>
+                </div>
+            }
+        }
+    </div>
+    </div>
+</div>

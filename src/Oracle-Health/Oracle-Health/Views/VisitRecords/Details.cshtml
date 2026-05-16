@@ -1,0 +1,39 @@
+@model Oracle_Health.Models.ViewModels.VisitRecordListItemViewModel
+
+@{
+    ViewData["Title"] = "Visit Record Details";
+}
+
+<div class="profile-shell">
+    <div class="profile-header">
+        <div>
+            <h1>Visit Record</h1>
+            <p>@Model.PatientName</p>
+        </div>
+        <a asp-controller="VisitRecords" asp-action="Index" class="nav-text-link">Back to records</a>
+    </div>
+
+    <div class="profile-grid">
+        <div class="profile-card">
+            <span>Appointment</span>
+            <strong>@Model.AppointmentDate.ToString("dddd, dd MMMM yyyy | hh:mm tt")</strong>
+        </div>
+        <div class="profile-card">
+            <span>Recorded by</span>
+            <strong>@Model.DoctorName</strong>
+        </div>
+        <div class="profile-card">
+            <span>Created</span>
+            <strong>@(Model.CreatedAt?.ToString("dd MMM yyyy, hh:mm tt") ?? "Not recorded")</strong>
+        </div>
+        <div class="profile-card">
+            <span>Prescription</span>
+            <strong>@(string.IsNullOrWhiteSpace(Model.Prescription) ? "None" : Model.Prescription)</strong>
+        </div>
+    </div>
+
+    <div class="profile-card visit-record-notes">
+        <span>Notes</span>
+        <strong>@Model.Notes</strong>
+    </div>
+</div>
