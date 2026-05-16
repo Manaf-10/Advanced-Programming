@@ -50,38 +50,66 @@ header {
 nav {
   border-right: 1px solid var(--border-color);
   height: 100%;
-  width: 4%;
+  width: 220px;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  padding: 12px 10px;
+  overflow-y: auto;
 }
 
 nav a {
-  margin-top: 15px;
-  width: 70%;
-  aspect-ratio: 1/1;
-  /*background-color:var(--active-item-color);*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
+  text-decoration: none;
 }
 
-nav div {
-  height: 100%;
+.nav-link-item {
+  min-height: 42px;
+  width: 100%;
   display: flex;
-  flex-direction: column-reverse;
   align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  color: var(--secondairy-color);
+  font-size: 0.94rem;
+  padding: 8px 10px;
+}
+
+.nav-link-item:hover,
+.nav-link-item:focus {
+  color: var(--secondairy-color);
+  background-color: var(--active-item-color);
+}
+
+.nav-link-item img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.profile-section {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .profile-link {
-  justify-self: end;
-  width: 200%;
-  margin-bottom: 15px;
+  margin-top: 8px;
 }
 
-nav a img {
-  width: 75%;
+.nav-logout-form {
+  height: auto;
+}
+
+.nav-button-link {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
+  font-weight: inherit;
+  cursor: pointer;
 }
 
 .notifications-image-container {
@@ -97,6 +125,13 @@ nav a img {
 .notifications-image-container img {
   height: 80%;
   aspect-ratio: 1/1;
+}
+
+.notifications-image-container a {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .logo-image-container {
@@ -390,7 +425,7 @@ form {
 
 .auth-shell,
 .profile-shell {
-  width: 96vw;
+  width: calc(100vw - 220px);
   min-height: 94vh;
   display: flex;
   align-items: center;
@@ -606,6 +641,22 @@ form {
   .profile-shell {
     width: calc(100vw - 56px);
     padding: 16px;
+  }
+
+  nav {
+    align-items: center;
+    min-width: 56px;
+    padding: 10px 6px;
+  }
+
+  .nav-link-item {
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px;
+  }
+
+  .nav-link-item span:last-child {
+    display: none;
   }
 
   .auth-panel {
