@@ -22,14 +22,41 @@ public class AppointmentsController : Controller
         _appointmentHub = appointmentHub;
     }
 
+    [Authorize]
     public async Task<IActionResult> Index()
     {
-        var appointmentRecords = await _context.Appointments
+        IQueryable<Appointment> appointmentQuery = _context.Appointments
             .AsNoTracking()
             .Include(appointment => appointment.Patient)
                 .ThenInclude(patient => patient.User)
             .Include(appointment => appointment.Doctor)
-                .ThenInclude(doctor => doctor.User)
+                .ThenInclude(doctor => doctor.User);
+
+        if (!User.IsInRole("Admin") && !User.IsInRole("Reception"))
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdClaim, out var userId))
+            {
+                return Forbid();
+            }
+
+            if (User.IsInRole("Doctor"))
+            {
+                appointmentQuery = appointmentQuery
+                    .Where(appointment => appointment.Doctor.UserId == userId);
+            }
+            else if (User.IsInRole("Patient"))
+            {
+                appointmentQuery = appointmentQuery
+                    .Where(appointment => appointment.Patient.UserId == userId);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        var appointmentRecords = await appointmentQuery
             .OrderBy(appointment => appointment.Date)
             .ToListAsync();
 
@@ -41,6 +68,7 @@ public class AppointmentsController : Controller
                 DoctorName = appointment.Doctor.User.FirstName + " " + appointment.Doctor.User.LastName,
                 Date = appointment.Date,
                 Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                CanOpenDetails = CanCurrentUserOpenVisitForm(appointment),
                 StatusActions = GetVisibleStatusActions(appointment)
             })
             .ToList();
@@ -48,6 +76,7 @@ public class AppointmentsController : Controller
         return View("~/Views/Appointment/Index.cshtml", appointments);
     }
 
+    [Authorize]
     public async Task<IActionResult> Details(long id)
     {
         var appointmentQuery = _context.Appointments
@@ -63,6 +92,16 @@ public class AppointmentsController : Controller
         if (appointment is null)
         {
             return RedirectToAction("Index");
+        }
+
+        if (!CanCurrentUserViewAppointment(appointment))
+        {
+            return Forbid();
+        }
+
+        if (!CanCurrentUserOpenVisitForm(appointment))
+        {
+            return Forbid();
         }
 
         var model = new AppointmentVisitFormViewModel
@@ -236,6 +275,38 @@ public class AppointmentsController : Controller
 
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         return long.TryParse(userIdClaim, out var userId) && appointment.Doctor.UserId == userId;
+    }
+
+    private bool CanCurrentUserViewAppointment(Appointment appointment)
+    {
+        if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+        {
+            return true;
+        }
+
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdClaim, out var userId))
+        {
+            return false;
+        }
+
+        if (User.IsInRole("Doctor"))
+        {
+            return appointment.Doctor.UserId == userId;
+        }
+
+        if (User.IsInRole("Patient"))
+        {
+            return appointment.Patient.UserId == userId;
+        }
+
+        return false;
+    }
+
+    private bool CanCurrentUserOpenVisitForm(Appointment appointment)
+    {
+        return appointment.Status == AppointmentStatus.InProgress
+            && CanCurrentDoctorCompleteVisit(appointment);
     }
 
     private async Task BroadcastStatusChange(Appointment appointment)

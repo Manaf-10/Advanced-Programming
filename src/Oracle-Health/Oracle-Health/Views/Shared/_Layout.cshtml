@@ -80,9 +80,9 @@
                                             }
                                         </div>
                                         <form asp-controller="Notifications"
-                                              asp-action="Delete"
-                                              asp-route-id="@notification.Id"
-                                              method="post">
+                                                asp-action="Delete"
+                                                asp-route-id="@notification.Id"
+                                                method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="notification-delete-button" aria-label="Delete notification">Delete</button>
                                         </form>
@@ -139,15 +139,11 @@
                         <img src="~/images/appointments-icon.png" alt="">
                         <span>My Appointments</span>
                     </a>
-                    <a href="/appointments/live" class="nav-link-item">
-                        <img src="~/images/visit-icon.png" alt="">
-                        <span>Live Board</span>
-                    </a>
                     <a href="/visit-records" class="nav-link-item">
                         <span>VR</span>
                         <span>Visit Records</span>
                     </a>
-                    <a href="/patients" class="nav-link-item">
+                    <a href="/patients/list" class="nav-link-item">
                         <img src="~/images/patients.png" alt="">
                         <span>Patients</span>
                     </a>
@@ -222,9 +218,6 @@
                         <img src="~/images/user-pfp.svg" alt="">
                         <span>Profile</span>
                     </a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="nav-logout-form">
-                        <button type="submit" class="nav-link-item nav-button-link">Logout</button>
-                    </form>
                 </div>
             }
             else

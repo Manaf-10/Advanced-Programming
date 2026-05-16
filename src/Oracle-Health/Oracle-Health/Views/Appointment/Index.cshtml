@@ -1,11 +1,12 @@
 @model IEnumerable<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
 
 @{
-    ViewData["Title"] = "Appointments";
+    var pageTitle = ViewData["Title"] as string ?? "Appointments";
+    ViewData["Title"] = pageTitle;
 }
 
 <div class="appointments-container">
-    <h1 class="main-title">Appointments</h1>
+    <h1 class="main-title">@pageTitle</h1>
     <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
     <div class="appointments-container-header appointment-grid-row">
         <p>Patient Name</p>
@@ -28,12 +29,19 @@
             @foreach (var appointment in Model)
             {
                 <div id="appointment-row-@appointment.Id"
-                     class="appointments-cell appointment-grid-row appointment-row-link"
+                     class="appointments-cell appointment-grid-row @(appointment.CanOpenDetails ? "appointment-row-link" : "")"
                      data-appointment-id="@appointment.Id">
-                    <a asp-controller="Appointments"
-                       asp-action="Details"
-                       asp-route-id="@appointment.Id"
-                       class="appointment-cell-link">@appointment.PatientName</a>
+                    @if (appointment.CanOpenDetails)
+                    {
+                        <a asp-controller="Appointments"
+                           asp-action="Details"
+                           asp-route-id="@appointment.Id"
+                           class="appointment-cell-link">@appointment.PatientName</a>
+                    }
+                    else
+                    {
+                        <p>@appointment.PatientName</p>
+                    }
                     <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
                     <p class="appointment-status @appointment.Status">@appointment.Status</p>
                     <div class="appointment-actions">
