@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Oracle_Health.Models;
@@ -51,5 +53,56 @@ public class DoctorController : Controller
 
         return View(new DoctorIndexViewModel { Doctors = doctors });
     }
-}
 
+    [Authorize(Roles = "Doctor")]
+    [HttpGet("/doctors/me/appointments")]
+    public async Task<IActionResult> MyAppointments()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!long.TryParse(userIdClaim, out var userId))
+        {
+            return Forbid();
+        }
+
+        var doctor = await _context.Doctors
+            .AsNoTracking()
+            .FirstOrDefaultAsync(item => item.UserId == userId);
+
+        if (doctor is null)
+        {
+            return Forbid();
+        }
+
+        var appointmentRecords = await _context.Appointments
+            .AsNoTracking()
+            .Include(appointment => appointment.Patient)
+                .ThenInclude(patient => patient.User)
+            .Where(appointment => appointment.DoctorId == doctor.Id)
+            .OrderBy(appointment => appointment.Date)
+            .ToListAsync();
+
+        var appointments = appointmentRecords
+            .Select(appointment => new AppointmentListItemViewModel
+            {
+                Id = appointment.Id,
+                PatientName = appointment.Patient.User.FirstName + " " + appointment.Patient.User.LastName,
+                DoctorName = string.Empty,
+                Date = appointment.Date,
+                Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                StatusActions = appointment.Status == AppointmentStatus.CheckedIn
+                    ? new List<AppointmentStatusActionViewModel>
+                    {
+                        new()
+                        {
+                            Status = AppointmentStatus.InProgress,
+                            Label = AppointmentStatus.ToActionLabel(AppointmentStatus.InProgress)
+                        }
+                    }
+                    : new List<AppointmentStatusActionViewModel>()
+            })
+            .ToList();
+
+        ViewData["Title"] = "My Appointments";
+        return View("~/Views/Appointment/Index.cshtml", appointments);
+    }
+}

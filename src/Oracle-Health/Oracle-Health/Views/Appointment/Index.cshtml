@@ -1,11 +1,12 @@
 @model IEnumerable<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
 
 @{
-    ViewData["Title"] = "Appointments";
+    var pageTitle = ViewData["Title"] as string ?? "Appointments";
+    ViewData["Title"] = pageTitle;
 }
 
 <div class="appointments-container">
-    <h1 class="main-title">Appointments</h1>
+    <h1 class="main-title">@pageTitle</h1>
     <p id="appointment-live-status" class="appointment-live-status">Live updates connecting...</p>
     <div class="appointments-container-header appointment-grid-row">
         <p>Patient Name</p>
