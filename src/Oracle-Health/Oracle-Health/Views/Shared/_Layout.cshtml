@@ -147,7 +147,7 @@
                         <span>VR</span>
                         <span>Visit Records</span>
                     </a>
-                    <a href="/patients" class="nav-link-item">
+                    <a href="/patients/list" class="nav-link-item">
                         <img src="~/images/patients.png" alt="">
                         <span>Patients</span>
                     </a>
@@ -222,9 +222,6 @@
                         <img src="~/images/user-pfp.svg" alt="">
                         <span>Profile</span>
                     </a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="nav-logout-form">
-                        <button type="submit" class="nav-link-item nav-button-link">Logout</button>
-                    </form>
                 </div>
             }
             else
