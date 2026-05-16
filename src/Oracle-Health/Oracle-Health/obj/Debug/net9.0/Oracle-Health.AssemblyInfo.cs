@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dbda6092ac35a6ab16685b626d1743c8a3214a47")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f02198d1f84205bc56457abb1771a75f236bb226")]
 [assembly: System.Reflection.AssemblyProductAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

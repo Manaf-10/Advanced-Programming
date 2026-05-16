@@ -334,7 +334,6 @@ C:\Users\e3gamez\Advanced-Programming\.codex-build-check\Oracle-Health.deps.json
 C:\Users\e3gamez\Advanced-Programming\.codex-build-check\Oracle-Health.runtimeconfig.json
 C:\Users\e3gamez\Advanced-Programming\.codex-build-check\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\.codex-build-check\Oracle-Health.pdb
-C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-4s5fq27a9q-4s5fq27a9q.gz
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\appsettings.Development.json
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\appsettings.json
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.staticwebassets.runtime.json
@@ -345,3 +344,4 @@ C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.runti
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\artifacts\verify-build\Oracle-Health.pdb
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-9y0cfcaccz-9y0cfcaccz.gz
