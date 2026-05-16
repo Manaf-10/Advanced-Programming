@@ -352,5 +352,5 @@ C:\Users\e3gamez\Advanced-Programming\build-verify\Oracle-Health.deps.json
 C:\Users\e3gamez\Advanced-Programming\build-verify\Oracle-Health.runtimeconfig.json
 C:\Users\e3gamez\Advanced-Programming\build-verify\Oracle-Health.dll
 C:\Users\e3gamez\Advanced-Programming\build-verify\Oracle-Health.pdb
+C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-czsdncrv55-czsdncrv55.gz
 C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
-C:\Users\e3gamez\Advanced-Programming\src\Oracle-Health\Oracle-Health\obj\Debug\net9.0\compressed\ymjdpw0vzl-{0}-sa1zz5co5q-sa1zz5co5q.gz

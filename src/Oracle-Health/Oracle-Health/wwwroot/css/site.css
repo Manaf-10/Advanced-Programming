@@ -560,6 +560,138 @@ form {
   margin-bottom: 8px;
 }
 
+.availability-page {
+  width: min(100%, 1120px);
+}
+
+.availability-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.availability-header p {
+  color: var(--secondairy-color);
+  margin-left: 1.5%;
+}
+
+.availability-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 20px;
+}
+
+.availability-week-nav a {
+  min-width: 42px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--background-color);
+  background-color: var(--clickable-items-color);
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  padding: 0 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.availability-week-nav a:hover {
+  background-color: var(--secondairy-color);
+}
+
+.availability-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 10px;
+  margin-left: 1.5%;
+}
+
+.availability-day {
+  min-height: 360px;
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.availability-today {
+  border-color: var(--input-border-color);
+}
+
+.availability-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--secondairy-color);
+  background-color: #ffffff33;
+  padding: 10px;
+}
+
+.availability-day-header strong,
+.availability-day-header span {
+  font-size: 0.95rem;
+}
+
+.availability-empty {
+  color: #5d7780;
+  padding: 14px 10px;
+}
+
+.availability-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.availability-block {
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--secondairy-color);
+  border: 1px solid var(--border-color);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background-color: #ffffff33;
+  padding: 10px;
+}
+
+.availability-block strong,
+.availability-block span,
+.availability-block p {
+  display: block;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.availability-block strong {
+  font-size: 0.95rem;
+}
+
+.availability-block span,
+.availability-block p {
+  color: #5d7780;
+  font-size: 0.82rem;
+}
+
+.availability-block-working {
+  border-left-color: #4c825c;
+}
+
+.availability-block-appointment {
+  border-left-color: #4771d3;
+}
+
+.availability-block-off {
+  border-left-color: #ff2617;
+}
+
 .patient-search-form {
   display: flex;
   align-items: center;
@@ -864,6 +996,24 @@ form {
 }
 
 @media (max-width: 760px) {
+  .availability-header {
+    flex-direction: column;
+  }
+
+  .availability-week-nav {
+    padding-top: 0;
+    margin-left: 1.5%;
+  }
+
+  .availability-grid {
+    grid-template-columns: 1fr;
+    margin-right: 1.5%;
+  }
+
+  .availability-day {
+    min-height: auto;
+  }
+
   .visit-records-container {
     width: 100%;
   }
