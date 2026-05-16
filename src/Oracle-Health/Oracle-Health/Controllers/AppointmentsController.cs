@@ -68,6 +68,7 @@ public class AppointmentsController : Controller
                 DoctorName = appointment.Doctor.User.FirstName + " " + appointment.Doctor.User.LastName,
                 Date = appointment.Date,
                 Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                CanOpenDetails = CanCurrentUserOpenVisitForm(appointment),
                 StatusActions = GetVisibleStatusActions(appointment)
             })
             .ToList();
@@ -94,6 +95,11 @@ public class AppointmentsController : Controller
         }
 
         if (!CanCurrentUserViewAppointment(appointment))
+        {
+            return Forbid();
+        }
+
+        if (!CanCurrentUserOpenVisitForm(appointment))
         {
             return Forbid();
         }
@@ -295,6 +301,12 @@ public class AppointmentsController : Controller
         }
 
         return false;
+    }
+
+    private bool CanCurrentUserOpenVisitForm(Appointment appointment)
+    {
+        return appointment.Status == AppointmentStatus.InProgress
+            && CanCurrentDoctorCompleteVisit(appointment);
     }
 
     private async Task BroadcastStatusChange(Appointment appointment)

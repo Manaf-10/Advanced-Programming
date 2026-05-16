@@ -29,12 +29,19 @@
             @foreach (var appointment in Model)
             {
                 <div id="appointment-row-@appointment.Id"
-                     class="appointments-cell appointment-grid-row appointment-row-link"
+                     class="appointments-cell appointment-grid-row @(appointment.CanOpenDetails ? "appointment-row-link" : "")"
                      data-appointment-id="@appointment.Id">
-                    <a asp-controller="Appointments"
-                       asp-action="Details"
-                       asp-route-id="@appointment.Id"
-                       class="appointment-cell-link">@appointment.PatientName</a>
+                    @if (appointment.CanOpenDetails)
+                    {
+                        <a asp-controller="Appointments"
+                           asp-action="Details"
+                           asp-route-id="@appointment.Id"
+                           class="appointment-cell-link">@appointment.PatientName</a>
+                    }
+                    else
+                    {
+                        <p>@appointment.PatientName</p>
+                    }
                     <p>@appointment.Date.ToString("dddd, dd MMMM yyyy | hh:mm tt")</p>
                     <p class="appointment-status @appointment.Status">@appointment.Status</p>
                     <div class="appointment-actions">

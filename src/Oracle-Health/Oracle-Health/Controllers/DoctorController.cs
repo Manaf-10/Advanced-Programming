@@ -89,6 +89,7 @@ public class DoctorController : Controller
                 DoctorName = string.Empty,
                 Date = appointment.Date,
                 Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                CanOpenDetails = appointment.Status == AppointmentStatus.InProgress,
                 StatusActions = appointment.Status == AppointmentStatus.CheckedIn
                     ? new List<AppointmentStatusActionViewModel>
                     {
