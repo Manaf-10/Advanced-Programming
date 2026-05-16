@@ -58,6 +58,7 @@ Controllers/
  AppointmentsController.cs
  DoctorController.cs
  HomeController.cs
+ NotificationsController.cs
  PatientsController.cs
 Data/DatabaseSeeder.cs
 Hubs/AppointmentHub.cs

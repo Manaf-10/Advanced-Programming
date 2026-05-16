@@ -22,7 +22,33 @@ public class AppointmentsController : Controller
         _appointmentHub = appointmentHub;
     }
 
-    public async Task<IActionResult> Index(long? id)
+    public async Task<IActionResult> Index()
+    {
+        var appointmentRecords = await _context.Appointments
+            .AsNoTracking()
+            .Include(appointment => appointment.Patient)
+                .ThenInclude(patient => patient.User)
+            .Include(appointment => appointment.Doctor)
+                .ThenInclude(doctor => doctor.User)
+            .OrderBy(appointment => appointment.Date)
+            .ToListAsync();
+
+        var appointments = appointmentRecords
+            .Select(appointment => new AppointmentListItemViewModel
+            {
+                Id = appointment.Id,
+                PatientName = appointment.Patient.User.FirstName + " " + appointment.Patient.User.LastName,
+                DoctorName = appointment.Doctor.User.FirstName + " " + appointment.Doctor.User.LastName,
+                Date = appointment.Date,
+                Status = AppointmentStatus.ToDisplayName(appointment.Status),
+                StatusActions = GetVisibleStatusActions(appointment)
+            })
+            .ToList();
+
+        return View("~/Views/Appointment/Index.cshtml", appointments);
+    }
+
+    public async Task<IActionResult> Details(long id)
     {
         var appointmentQuery = _context.Appointments
             .AsNoTracking()
@@ -32,13 +58,11 @@ public class AppointmentsController : Controller
                 .ThenInclude(doctor => doctor.User)
             .OrderBy(appointment => appointment.Date);
 
-        var appointment = id.HasValue
-            ? await appointmentQuery.FirstOrDefaultAsync(item => item.Id == id.Value)
-            : await appointmentQuery.FirstOrDefaultAsync();
+        var appointment = await appointmentQuery.FirstOrDefaultAsync(item => item.Id == id);
 
         if (appointment is null)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         var model = new AppointmentVisitFormViewModel
@@ -49,7 +73,7 @@ public class AppointmentsController : Controller
             AppointmentDate = appointment.Date
         };
 
-        return View("~/Views/Appointment/Index.cshtml", model);
+        return View("~/Views/Appointment/Details.cshtml", model);
     }
 
     [HttpPost]
@@ -69,7 +93,7 @@ public class AppointmentsController : Controller
         if (!AppointmentStatus.CanTransition(appointment.Status, status))
         {
             TempData["ErrorMessage"] = "That appointment status change is not allowed.";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         if (!CanCurrentUserSetStatus(appointment, status))
@@ -81,7 +105,7 @@ public class AppointmentsController : Controller
         await _context.SaveChangesAsync();
         await BroadcastStatusChange(appointment);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index");
     }
 
     [HttpPost]
@@ -112,7 +136,7 @@ public class AppointmentsController : Controller
         if (!ModelState.IsValid)
         {
             await PopulateAppointmentDetails(model, appointment.Id);
-            return View("~/Views/Appointment/Index.cshtml", model);
+            return View("~/Views/Appointment/Details.cshtml", model);
         }
 
         var notes = string.IsNullOrWhiteSpace(model.Notes)
@@ -142,7 +166,19 @@ public class AppointmentsController : Controller
         await _context.SaveChangesAsync();
         await BroadcastStatusChange(appointment);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index");
+    }
+
+    private List<AppointmentStatusActionViewModel> GetVisibleStatusActions(Appointment appointment)
+    {
+        return AppointmentStatus.GetAllowedNextStatuses(appointment.Status)
+            .Where(nextStatus => CanCurrentUserSetStatus(appointment, nextStatus))
+            .Select(nextStatus => new AppointmentStatusActionViewModel
+            {
+                Status = nextStatus,
+                Label = AppointmentStatus.ToActionLabel(nextStatus)
+            })
+            .ToList();
     }
 
     private async Task PopulateAppointmentDetails(AppointmentVisitFormViewModel model, long appointmentId)
