@@ -1,0 +1,221 @@
+﻿@model Oracle_Health.Models.ViewModels.LookupViewModel
+
+@{
+    ViewData["Title"] = "Appointment Lookup";
+}
+
+<style>
+    .lookup-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding-top: 2%;
+        padding-bottom: 4%;
+        margin-left: 3%;
+    }
+
+    .lookup-intro {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+        .lookup-intro p {
+            color: #888;
+            font-size: 0.97rem;
+            margin-top: 6px;
+        }
+
+    .lookup-card {
+        background-color: var(--containers-color);
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        padding: 36px 40px;
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .lookup-field {
+        display: flex;
+        flex-direction: column;
+    }
+    @* label for the look up *@
+        .lookup-field label {
+            width: fit-content;
+            padding: 3px 6px 2px 6px;
+            z-index: 2;
+            position: relative;
+            margin-left: 15px;
+            margin-bottom: -1px;
+            background-color: var(--background-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--secondairy-color);
+        }
+            @* input field for the look up *@
+        .lookup-field input {
+            background-color: var(--background-color);
+            border: 1px solid var(--input-border-color);
+            border-radius: 9px;
+            height: 48px;
+            padding: 0 15px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #333;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 2%;
+        }
+            @* input field when clicked  *@
+
+            .lookup-field input:focus {
+                outline: none;
+                border: 2px solid var(--secondairy-color);
+            }
+
+     @* Error Message *@
+    .field-error {
+        color: #e53e3e;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        margin-left: 4px;
+    }
+
+    .lookup-btn {
+        background-color: var(--clickable-items-color);
+        border-radius: 9px;
+        color: #fff;
+        height: 48px;
+        width: 100%;
+        border: none;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .lookup-btn:hover {
+            opacity: 0.88;
+        }
+
+    .results-section {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 36px;
+    }
+
+    .results-patient {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--secondairy-color);
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .results-empty {
+        background-color: var(--containers-color);
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        padding: 32px;
+        text-align: center;
+        color: #888;
+    }
+
+    .results-table-header,
+    .results-table-row {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr 2fr 1fr;
+        padding: 12px 16px;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .results-table-header {
+        font-weight: 700;
+        color: var(--secondairy-color);
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .results-table-row {
+        background-color: var(--containers-color);
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.95rem;
+    }
+
+    .status-Confirmed {
+        color: var(--clickable-items-color);
+        font-weight: 600;
+    }
+
+    .status-Requested {
+        color: #888;
+        font-weight: 600;
+    }
+
+    .status-Checked-In {
+        color: var(--clickable-items-color);
+        font-weight: 600;
+    }
+</style>
+
+<div class="lookup-container">
+
+    <div class="lookup-intro">
+        <h1 class="main-title">Appointment Lookup</h1>
+        <p>Enter your patient reference number to view upcoming appointments</p>
+    </div>
+
+    <div class="lookup-card">
+        <form method="post" asp-controller="Lookup" asp-action="Index">
+            @Html.AntiForgeryToken()
+
+            <div class="lookup-field">
+                <label>Patient Reference Number</label>
+                <input type="number" name="PatientReference"
+                       value="@Model.PatientReference"
+                       placeholder="e.g. 10001" />
+                @if (ViewContext.ModelState["PatientReference"]?.Errors.Count > 0)
+                {
+                    <span class="field-error">@ViewContext.ModelState["PatientReference"]!.Errors[0].ErrorMessage</span>
+                }
+            </div>
+
+            <button type="submit" class="lookup-btn">Look Up Appointments</button>
+        </form>
+    </div>
+
+    @if (Model.Searched && ViewContext.ModelState.IsValid)
+    {
+        <div class="results-section">
+            <div class="results-patient">Upcoming appointments for @Model.PatientName</div>
+
+            @if (!Model.Appointments.Any())
+            {
+                <div class="results-empty">No upcoming appointments found.</div>
+            }
+            else
+            {
+                <div class="results-table-header">
+                    <span>Doctor</span>
+                    <span>Specialization</span>
+                    <span>Date &amp; Time</span>
+                    <span>Status</span>
+                </div>
+
+                @foreach (var appt in Model.Appointments)
+                {
+                    <div class="results-table-row">
+                        <span>@appt.DoctorName</span>
+                        <span>@appt.Specialization</span>
+                        <span>@appt.Date.ToString("ddd, dd MMM yyyy | hh:mm tt")</span>
+                        <span class="status-@appt.Status.Replace(" ", "-")">@appt.Status</span>
+                    </div>
+                }
+            }
+        </div>
+    }
+
+</div>
