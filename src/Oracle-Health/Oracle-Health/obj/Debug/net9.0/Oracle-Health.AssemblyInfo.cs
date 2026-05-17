@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a58dfdc6cf22a78af62a2a97021176eab30c207")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e33372e756244d3621f3eeb69d2aad7dfd61e249")]
 [assembly: System.Reflection.AssemblyProductAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Oracle-Health")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

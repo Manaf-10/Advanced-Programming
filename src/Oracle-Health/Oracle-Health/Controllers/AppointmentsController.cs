@@ -247,8 +247,6 @@ public class AppointmentsController : Controller
     }
 
 
-    // Add these two actions inside AppointmentsController
-
     [Authorize(Roles = "Patient")]
     public async Task<IActionResult> Book()
     {
