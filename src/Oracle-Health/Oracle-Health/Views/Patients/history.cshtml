@@ -1,0 +1,128 @@
+﻿@model Oracle_Health.Models.ViewModels.PatientHistoryViewModel
+
+@{
+    ViewData["Title"] = "Visit History";
+}
+
+<div class="history-container">
+    <h1 class="main-title">Visit History</h1>
+    <p class="history-subtitle">Past completed visits and prescriptions for @Model.PatientName</p>
+
+    @if (!Model.Visits.Any())
+    {
+        <div class="history-empty">
+            <p>No visit history found.</p>
+        </div>
+    }
+    else
+    {
+        <div class="history-table-wrapper">
+            <div class="history-table-header history-row">
+                <span>Doctor</span>
+                <span>Specialization</span>
+                <span>Date</span>
+                <span>Notes</span>
+                <span>Prescription</span>
+            </div>
+
+            @foreach (var visit in Model.Visits)
+            {
+                <div class="history-row history-table-row">
+                    <span class="appointments-cell">@visit.DoctorName</span>
+                    <span class="appointments-cell">@visit.Specialization</span>
+                    <span class="appointments-cell">@visit.VisitDate.ToString("dddd, dd MMM yyyy | hh:mm tt")</span>
+                    <span class="history-notes">@visit.Notes</span>
+                    <span class="history-prescription">
+                        @if (!string.IsNullOrEmpty(visit.Prescription))
+                        {
+                            @visit.Prescription
+                        }
+                        else
+                        {
+                            <span class="history-none">—</span>
+                        }
+                    </span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            width: 95%;
+            margin: 0 auto;
+            padding-top: 1%;
+        }
+
+        .history-subtitle {
+            color: #666;
+            margin-left: 1%;
+            margin-bottom: 2%;
+            font-weight: 400;
+        }
+
+        .history-table-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 0;
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 2fr 2fr 1.5fr;
+            padding: 12px 1%;
+            align-items: center;
+            gap: 1%;
+        }
+
+        .history-table-header {
+            font-weight: 700;
+            color: var(--secondairy-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 4px;
+        }
+
+        .history-table-row {
+            background-color: var(--containers-color);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            transition: background-color 0.15s ease;
+        }
+
+            .history-table-row:hover {
+                background-color: var(--active-item-color);
+            }
+
+        .history-notes {
+            color: #444;
+            font-size: 0.92rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-prescription {
+            color: var(--clickable-items-color);
+            font-size: 0.92rem;
+        }
+
+        .history-none {
+            color: #aaa;
+        }
+
+        .history-empty {
+            background-color: var(--containers-color);
+            padding: 40px;
+            text-align: center;
+            color: #888;
+            border-radius: 9px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+}

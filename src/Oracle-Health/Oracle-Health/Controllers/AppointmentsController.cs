@@ -245,4 +245,129 @@ public class AppointmentsController : Controller
             appointment.Id,
             AppointmentStatus.ToDisplayName(appointment.Status));
     }
+
+
+    // Add these two actions inside AppointmentsController
+
+    [Authorize(Roles = "Patient")]
+    public async Task<IActionResult> Book()
+    {
+        var specializations = await _context.Specializations
+            .AsNoTracking()
+            .OrderBy(s => s.Name)
+            .Select(s => new SpecializationOptionViewModel
+            {
+                Id = s.Id,
+                Name = s.Name
+            })
+            .ToListAsync();
+
+        var doctors = await _context.Doctors
+            .AsNoTracking()
+            .Include(d => d.User)
+            .Include(d => d.Specializations)
+            .OrderBy(d => d.User.FirstName)
+            .Select(d => new DoctorOptionViewModel
+            {
+                Id = d.Id,
+                FullName = "Dr. " + d.User.FirstName + " " + d.User.LastName,
+                SpecializationId = d.Specializations.Select(s => s.Id).FirstOrDefault()
+            })
+            .ToListAsync();
+
+        var viewModel = new BookAppointmentViewModel
+        {
+            Specializations = specializations,
+            Doctors = doctors
+        };
+
+        return View("~/Views/Appointment/Book.cshtml", viewModel);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Patient")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Book(BookAppointmentFormViewModel form)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
+        var userId = long.Parse(userIdClaim);
+
+        var patient = await _context.Patients
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient == null) return NotFound();
+
+        // Check the doctor exists
+        var doctor = await _context.Doctors
+            .FirstOrDefaultAsync(d => d.Id == form.DoctorId);
+
+        if (doctor == null)
+        {
+            TempData["ErrorMessage"] = "Selected doctor was not found.";
+            return RedirectToAction("Book");
+        }
+
+        // Prevent double-booking: patient must not have an active appointment at same time
+        var conflict = await _context.Appointments
+            .AnyAsync(a =>
+                a.PatientId == patient.Id &&
+                a.Date == form.AppointmentDate &&
+                a.Status != AppointmentStatus.Cancelled &&
+                a.Status != AppointmentStatus.Missed);
+
+        if (conflict)
+        {
+            TempData["ErrorMessage"] = "You already have an appointment at that date and time.";
+            return RedirectToAction("Book");
+        }
+
+        var appointment = new Appointment
+        {
+            PatientId = patient.Id,
+            DoctorId = form.DoctorId,
+            Date = form.AppointmentDate,
+            DurationMinutes = 30,
+            Status = AppointmentStatus.Requested
+        };
+
+        _context.Appointments.Add(appointment);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Your appointment has been requested successfully!";
+        return RedirectToAction("PatientAppointments");
+    }
+
+    [Authorize(Roles = "Patient")]
+    public async Task<IActionResult> PatientAppointments()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
+        var userId = long.Parse(userIdClaim);
+
+        var patient = await _context.Patients
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient == null) return NotFound();
+
+        var appointments = await _context.Appointments
+            .AsNoTracking()
+            .Where(a => a.PatientId == patient.Id)
+            .Include(a => a.Doctor).ThenInclude(d => d.User)
+            .OrderByDescending(a => a.Date)
+            .Select(a => new AppointmentListItemViewModel
+            {
+                Id = a.Id,
+                PatientName = patient.Id.ToString(), // not shown in patient view
+                DoctorName = "Dr. " + a.Doctor.User.FirstName + " " + a.Doctor.User.LastName,
+                Date = a.Date,
+                Status = AppointmentStatus.ToDisplayName(a.Status)
+            })
+            .ToListAsync();
+
+        return View("~/Views/Appointment/PatientAppointments.cshtml", appointments);
+    }
 }

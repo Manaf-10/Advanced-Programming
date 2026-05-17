@@ -1,0 +1,197 @@
+﻿@model Oracle_Health.Models.ViewModels.BookAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<style>
+    .book-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 700px;
+        padding: 24px 32px 40px 32px;
+        box-sizing: border-box;
+    }
+
+    .book-subtitle {
+        color: #666;
+        margin-bottom: 24px;
+        font-weight: 400;
+    }
+
+    .book-form-card {
+        background-color: var(--containers-color);
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        padding: 36px 40px 40px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .book-field {
+        display: flex;
+        flex-direction: column;
+        color: var(--secondairy-color);
+        width: 100%;
+    }
+
+        .book-field label {
+            width: fit-content;
+            padding: 3px 6px 2px 6px;
+            z-index: 2;
+            position: relative;
+            margin-left: 15px;
+            margin-bottom: -1px;
+            background-color: var(--background-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .book-field select,
+        .book-field input[type="datetime-local"] {
+            background-color: var(--background-color);
+            border: 1px solid var(--input-border-color);
+            border-radius: 9px;
+            height: 48px;
+            padding: 0 15px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #333;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .book-field select:focus,
+            .book-field input[type="datetime-local"]:focus {
+                outline: none;
+                border: 2px solid var(--secondairy-color);
+            }
+
+    #doctorSelect:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .book-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .btn-request {
+        background-color: var(--clickable-items-color);
+        border-radius: 9px;
+        color: #fff;
+        height: 48px;
+        min-width: 200px;
+        padding: 0 32px;
+        border: none;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .btn-request:hover {
+            opacity: 0.88;
+        }
+
+    .btn-cancel {
+        background-color: transparent;
+        border-radius: 9px;
+        color: var(--clickable-items-color);
+        height: 48px;
+        min-width: 120px;
+        padding: 0 32px;
+        border: 1px solid var(--clickable-items-color);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+        .btn-cancel:hover {
+            background-color: var(--active-item-color);
+            color: var(--clickable-items-color);
+            text-decoration: none;
+        }
+</style>
+
+<div class="book-container">
+    <h1 class="main-title">Book Appointment</h1>
+    <p class="book-subtitle">Choose a specialization, doctor, and preferred date and time.</p>
+
+    <form asp-controller="Appointments" asp-action="Book" method="post" class="book-form-card">
+        @Html.AntiForgeryToken()
+
+        <div class="book-field">
+            <label>Specialization</label>
+            <select id="specializationSelect">
+                <option value="">-- Select a specialization --</option>
+                @foreach (var spec in Model.Specializations)
+                {
+                    <option value="@spec.Id">@spec.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="book-field">
+            <label>Doctor</label>
+            <select name="DoctorId" id="doctorSelect" disabled required>
+                <option value="">-- Select a specialization first --</option>
+                @foreach (var doc in Model.Doctors)
+                {
+                    <option value="@doc.Id" data-spec="@doc.SpecializationId">@doc.FullName</option>
+                }
+            </select>
+        </div>
+
+        <div class="book-field">
+            <label>Preferred Date &amp; Time</label>
+            <input type="datetime-local" name="AppointmentDate" required
+                   min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+
+        <div class="book-actions">
+            <button type="submit" class="btn-request">Request Appointment</button>
+            <a asp-controller="Appointments" asp-action="PatientAppointments" class="btn-cancel">Cancel</a>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const specializationSelect = document.getElementById('specializationSelect');
+        const doctorSelect = document.getElementById('doctorSelect');
+        const allDoctorOptions = Array.from(doctorSelect.querySelectorAll('option[data-spec]'));
+
+        specializationSelect.addEventListener('change', function () {
+            const selectedSpec = this.value;
+
+            allDoctorOptions.forEach(opt => opt.remove());
+
+            if (!selectedSpec) {
+                doctorSelect.innerHTML = '<option value="">-- Select a specialization first --</option>';
+                doctorSelect.disabled = true;
+                return;
+            }
+
+            const matching = allDoctorOptions.filter(opt => opt.dataset.spec === selectedSpec);
+            doctorSelect.innerHTML = '<option value="">-- Select a doctor --</option>';
+            matching.forEach(opt => doctorSelect.appendChild(opt));
+            doctorSelect.disabled = false;
+        });
+    </script>
+}
