@@ -165,13 +165,36 @@
 
     <div class="lookup-intro">
         <h1 class="main-title">Appointment Lookup</h1>
-        <p>Enter your patient reference number to view upcoming appointments</p>
+        <p>
+            Enter your CPR number and patient reference number
+            to view upcoming appointments
+        </p>
     </div>
 
     <div class="lookup-card">
+        @if (ViewContext.ModelState[string.Empty]?.Errors.Count > 0)
+        {
+            <div class="field-error" style="text-align:center; margin-bottom:15px;">
+                @ViewContext.ModelState[string.Empty]!.Errors[0].ErrorMessage
+            </div>
+        }
         <form method="post" asp-controller="Lookup" asp-action="Index">
             @Html.AntiForgeryToken()
+            <div class="lookup-field">
+                <label>CPR Number</label>
 
+                <input type="text"
+                       name="Cpr"
+                       value="@Model.Cpr"
+                       placeholder="e.g. 123456789" />
+
+                @if (ViewContext.ModelState["Cpr"]?.Errors.Count > 0)
+                {
+                    <span class="field-error">
+                        @ViewContext.ModelState["Cpr"]!.Errors[0].ErrorMessage
+                    </span>
+                }
+            </div>
             <div class="lookup-field">
                 <label>Patient Reference Number</label>
                 <input type="number" name="PatientReference"

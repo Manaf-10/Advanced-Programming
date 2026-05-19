@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
+using System.Net.Http.Json;
 
 namespace Oracle_Health.Controllers;
 
 public class LookupController : Controller
 {
-    private readonly ClinicManagementSystemContext _context;
+    private readonly HttpClient _httpClient;
 
-    public LookupController(ClinicManagementSystemContext context)
+    public LookupController(IHttpClientFactory httpClientFactory)
     {
-        _context = context;
+        _httpClient = httpClientFactory.CreateClient("OracleHealthApi");
     }
 
     [HttpGet]
@@ -27,51 +26,67 @@ public class LookupController : Controller
         var viewModel = new LookupViewModel
         {
             PatientReference = form.PatientReference,
+            Cpr = form.Cpr,
             Searched = true
         };
 
+        if (form.Cpr == null)
+        {
+            ModelState.AddModelError(nameof(form.Cpr),
+                "Please enter your CPR number.");
+        }
+
         if (form.PatientReference == null)
         {
-            ModelState.AddModelError(nameof(form.PatientReference), "Please enter a patient reference number.");
-            return View(viewModel);
+            ModelState.AddModelError(nameof(form.PatientReference),
+                "Please enter a patient reference number.");
         }
 
-        // Find patient by their reference number (PatientId)
-        var patient = await _context.Patients
-            .AsNoTracking()
-            .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.PatientId == form.PatientReference.Value);
-
-        if (patient == null)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(nameof(form.PatientReference), "No patient found with that reference number.");
             return View(viewModel);
         }
 
-        // Only show upcoming appointments (not completed/cancelled/missed)
-        var appointments = await _context.Appointments
-            .AsNoTracking()
-            .Where(a =>
-                a.PatientId == patient.Id &&
-                a.Date >= DateTime.Now &&
-                a.Status != AppointmentStatus.Completed &&
-                a.Status != AppointmentStatus.Cancelled &&
-                a.Status != AppointmentStatus.Missed)
-            .Include(a => a.Doctor).ThenInclude(d => d.User)
-            .Include(a => a.Doctor).ThenInclude(d => d.Specializations)
-            .OrderBy(a => a.Date)
-            .Select(a => new LookupAppointmentViewModel
+        try
+        {
+            var response = await _httpClient.GetAsync(
+                $"api/appointments/lookup?patientReference={form.PatientReference}&cpr={form.Cpr}");
+
+            if (!response.IsSuccessStatusCode)
             {
-                DoctorName = "Dr. " + a.Doctor.User.FirstName + " " + a.Doctor.User.LastName,
-                Specialization = a.Doctor.Specializations.Select(s => s.Name).FirstOrDefault() ?? "General",
-                Date = a.Date,
-                Status = AppointmentStatus.ToDisplayName(a.Status)
-            })
-            .ToListAsync();
+                var errorMessage = await response.Content.ReadAsStringAsync();
 
-        viewModel.PatientName = patient.User.FirstName + " " + patient.User.LastName;
-        viewModel.Appointments = appointments;
+                ModelState.AddModelError(string.Empty,
+                    "No appointment information found.");
 
-        return View(viewModel);
+                return View(viewModel);
+            }
+
+            var result = await response.Content
+                .ReadFromJsonAsync<LookupResponseViewModel>();
+
+            var raw = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(raw);
+
+            if (result == null)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Unable to retrieve appointment data.");
+
+                return View(viewModel);
+            }
+
+            viewModel.PatientName = result.PatientName;
+            viewModel.Appointments = result.Appointments;
+
+            return View(viewModel);
+        }
+        catch
+        {
+            ModelState.AddModelError(string.Empty,
+                "Unable to connect to the lookup service.");
+
+            return View(viewModel);
+        }
     }
 }
