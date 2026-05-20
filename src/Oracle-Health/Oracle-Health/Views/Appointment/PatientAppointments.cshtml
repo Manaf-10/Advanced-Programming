@@ -81,13 +81,12 @@
             <h1 class="main-title">My Appointments</h1>
             <p class="appointments-subtitle">All your upcoming and past appointments.</p>
         </div>
-        <a asp-controller="Appointments" asp-action="Book" class="book-new-btn">+ Book New</a>
     </div>
 
     @if (!Model.Any())
     {
         <div class="appointments-empty">
-            <p>You have no appointments yet. <a asp-controller="Appointments" asp-action="Book">Book one now.</a></p>
+            <p>You have no appointments yet. Please contact the reseption to book a appointment.</p>
         </div>
     }
     else
