@@ -1,5 +1,8 @@
+@inject IConfiguration Configuration
+
 @{
     ViewData["Title"] = "Home";
+    var reportingBaseUrl = Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055";
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     var roleName = User.IsInRole("Admin")
         ? "Clinic Manager"
@@ -28,7 +31,7 @@
         {
             @if (User.IsInRole("Admin"))
             {
-                <a href="/reports/statistics" class="home-action-card">
+                <a href="@($"{reportingBaseUrl}/reports/statistics")" class="home-action-card">
                     <span>Reports</span>
                     <strong>Review clinic performance and appointment trends.</strong>
                 </a>

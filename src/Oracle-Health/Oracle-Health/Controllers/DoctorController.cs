@@ -15,7 +15,12 @@ public class DoctorController : Controller
     {
         _context = context;
     }
-
+    /**
+     * The Index action retrieves a list of doctors from the database, including their associated 
+     * user information, specializations, schedules, and appointments. It then maps this data to 
+     * a list of DoctorListItemViewModel instances, which are passed to the view for rendering. 
+     * The doctors are ordered by their first and last names for easier navigation.
+     * */
     public async Task<IActionResult> Index()
     {
         var today = DateTime.Today;
@@ -54,6 +59,12 @@ public class DoctorController : Controller
         return View(new DoctorIndexViewModel { Doctors = doctors });
     }
 
+    /**
+     * The MyAppointments action retrieves the currently logged-in doctor's appointments from the database. 
+     * It first checks if the user is authenticated and has the "Doctor" role. Then, it finds the doctor 
+     * record associated with the logged-in user and retrieves their appointments, including patient information. 
+     * The appointments are mapped to a list of AppointmentListItemViewModel instances, which are passed to the view for rendering.
+     * */
     [Authorize(Roles = "Doctor")]
     [HttpGet("/doctors/me/appointments")]
     public async Task<IActionResult> MyAppointments()
@@ -106,7 +117,12 @@ public class DoctorController : Controller
         ViewData["Title"] = "My Appointments";
         return View("~/Views/Appointment/Index.cshtml", appointments);
     }
-
+    /**
+     * The MyAvailability action retrieves the currently logged-in doctor's availability schedule for a specified week. 
+     * It first checks if the user is authenticated and has the "Doctor" role. Then, it finds the doctor record 
+     * associated with the logged-in user and retrieves their schedule blocks and appointments for the selected week. 
+     * The schedule blocks and appointments are combined into a list of DoctorAvailabilityBlockViewModel instances, which are grouped by day and passed to the view for rendering.
+     * */
     [Authorize(Roles = "Doctor")]
     [HttpGet("/doctors/me/availability")]
     public async Task<IActionResult> MyAvailability(DateTime? weekStart)

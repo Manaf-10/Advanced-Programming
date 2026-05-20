@@ -1,1 +1,134 @@
-[]
+[
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.AuthController",
+    "Method": "CreateToken",
+    "RelativePath": "api/auth/token",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Oracle_Health.Api.Controllers.TokenRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Oracle_Health.Api.Controllers.TokenResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.PublicAppointmentsController",
+    "Method": "Lookup",
+    "RelativePath": "api/public/appointments/lookup",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Oracle_Health.Api.Controllers.PublicAppointmentLookupRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Oracle_Health.Api.Controllers.PublicAppointmentLookupResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.ReportsController",
+    "Method": "AppointmentStatusBreakdown",
+    "RelativePath": "api/reports/appointment-status",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IReadOnlyList\u00601[[Oracle_Health.Api.Controllers.AppointmentStatusReportItem, Oracle-Health.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.ReportsController",
+    "Method": "Cancellations",
+    "RelativePath": "api/reports/cancellations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Oracle_Health.Api.Controllers.CancellationReport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.ReportsController",
+    "Method": "DoctorWorkload",
+    "RelativePath": "api/reports/doctor-workload",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IReadOnlyList\u00601[[Oracle_Health.Api.Controllers.DoctorWorkloadReportItem, Oracle-Health.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Oracle_Health.Api.Controllers.ReportsController",
+    "Method": "Summary",
+    "RelativePath": "api/reports/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Oracle_Health.Api.Controllers.ClinicSummaryReport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  }
+]

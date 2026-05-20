@@ -26,7 +26,7 @@
         }
         else
         {
-            @foreach (var appointment in Model)
+            foreach (var appointment in Model)
             {
                 <div id="appointment-row-@appointment.Id"
                      class="appointments-cell appointment-grid-row @(appointment.CanOpenDetails ? "appointment-row-link" : "")"

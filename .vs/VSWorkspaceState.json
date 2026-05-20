@@ -1,14 +1,14 @@
 {
   "ExpandedNodes": [
     "",
-    "\\assets",
     "\\src",
     "\\src\\Oracle-Health",
-    "\\src\\Oracle-Health\\Oracle-Health",
+    "\\src\\Oracle-Health\\Oracle-Health\\Controllers",
     "\\src\\Oracle-Health\\Oracle-Health\\Models",
     "\\src\\Oracle-Health\\Oracle-Health\\Views",
+    "\\src\\Oracle-Health\\Oracle-Health\\Views\\Appointment",
     "\\src\\Oracle-Health\\Oracle-Health\\wwwroot"
   ],
-  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health\\Models\\Doctor.cs",
+  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health.sln",
   "PreviewInSolutionExplorer": false
 }

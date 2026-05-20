@@ -1,0 +1,31 @@
+@model Oracle_Health.Reporting.Models.ManagerLoginViewModel
+
+@{
+    ViewData["Title"] = "Manager Reporting Login";
+}
+
+<section class="report-auth">
+    <div>
+        <p class="eyebrow">Oracle Health Reporting</p>
+        <h1>Clinic manager sign in</h1>
+        <p>Operational reporting is separate from the clinic workspace and reads data through the Web API.</p>
+    </div>
+
+    <form asp-action="Login" method="post" class="report-card report-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <label asp-for="Email"></label>
+        <input asp-for="Email" autocomplete="email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+
+        <label asp-for="Password"></label>
+        <input asp-for="Password" autocomplete="current-password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+
+        <button type="submit">Sign in</button>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

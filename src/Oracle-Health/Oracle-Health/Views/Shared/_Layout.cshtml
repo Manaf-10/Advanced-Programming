@@ -1,10 +1,12 @@
 ﻿@using System.Security.Claims
 @using Microsoft.EntityFrameworkCore
 @inject Oracle_Health.Models.ClinicManagementSystemContext DbContext
+@inject IConfiguration Configuration
 
 @{
     var layoutIsAuthenticated = User.Identity?.IsAuthenticated == true;
     var layoutNotifications = new List<Oracle_Health.Models.Notification>();
+    var reportingBaseUrl = Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055";
 
     if (layoutIsAuthenticated && long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var layoutUserId))
     {
@@ -191,15 +193,15 @@
                         <span>LB</span>
                         <span>Live Board</span>
                     </a>
-                    <a href="/reports/statistics" class="nav-link-item">
+                    <a href="@($"{reportingBaseUrl}/reports/statistics")" class="nav-link-item">
                         <span>ST</span>
                         <span>Statistics</span>
                     </a>
-                    <a href="/reports/doctor-workload" class="nav-link-item">
+                    <a href="@($"{reportingBaseUrl}/reports/doctor-workload")" class="nav-link-item">
                         <span>RW</span>
                         <span>Workload</span>
                     </a>
-                    <a href="/reports/cancellations" class="nav-link-item">
+                    <a href="@($"{reportingBaseUrl}/reports/cancellations")" class="nav-link-item">
                         <span>RC</span>
                         <span>Cancellations</span>
                     </a>
