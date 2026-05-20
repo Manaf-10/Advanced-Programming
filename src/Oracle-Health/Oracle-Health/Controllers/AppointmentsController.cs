@@ -316,4 +316,37 @@ public class AppointmentsController : Controller
             appointment.Id,
             AppointmentStatus.ToDisplayName(appointment.Status));
     }
+
+
+    [Authorize(Roles = "Patient")]
+    public async Task<IActionResult> PatientAppointments()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
+        var userId = long.Parse(userIdClaim);
+
+        var patient = await _context.Patients
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient == null) return NotFound();
+
+        var appointments = await _context.Appointments
+            .AsNoTracking()
+            .Where(a => a.PatientId == patient.Id)
+            .Include(a => a.Doctor).ThenInclude(d => d.User)
+            .OrderByDescending(a => a.Date)
+            .Select(a => new AppointmentListItemViewModel
+            {
+                Id = a.Id,
+                PatientName = patient.Id.ToString(), // not shown in patient view
+                DoctorName = "Dr. " + a.Doctor.User.FirstName + " " + a.Doctor.User.LastName,
+                Date = a.Date,
+                Status = AppointmentStatus.ToDisplayName(a.Status)
+            })
+            .ToListAsync();
+
+        return View("~/Views/Appointment/PatientAppointments.cshtml", appointments);
+    }
 }

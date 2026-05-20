@@ -1,0 +1,156 @@
+﻿@model Oracle_Health.Models.ViewModels.PatientPrescriptionsViewModel
+
+@{
+    ViewData["Title"] = "Prescriptions";
+}
+
+<style>
+    .rx-container {
+        display: flex;
+        flex-direction: column;
+        width: 95%;
+        padding-top: 1%;
+        margin: auto;
+    }
+
+    .rx-subtitle {
+        color: #666;
+        margin-left: 1%;
+        margin-bottom: 2%;
+        font-weight: 400;
+    }
+
+    .rx-empty {
+        background-color: var(--containers-color);
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        padding: 40px;
+        text-align: center;
+        color: #888;
+        margin-top: 1%;
+    }
+
+    .rx-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .rx-card {
+        background-color: var(--containers-color);
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        padding: 20px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .rx-card-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rx-doctor {
+        color: var(--secondairy-color);
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .rx-specialization {
+        font-size: 0.85rem;
+        color: #888;
+        font-weight: 400;
+        margin-top: 2px;
+    }
+
+    .rx-date {
+        font-size: 0.85rem;
+        color: #888;
+        white-space: nowrap;
+    }
+
+    .rx-divider {
+        border: none;
+        border-top: 1px solid var(--border-color);
+        margin: 0;
+    }
+
+    .rx-label {
+        font-size: 0.8rem;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+
+    .rx-text {
+        color: var(--clickable-items-color);
+        font-size: 0.97rem;
+        font-weight: 600;
+    }
+
+    .rx-notes-text {
+        color: #555;
+        font-size: 0.92rem;
+        font-weight: 400;
+    }
+
+    .rx-badge {
+        background-color: var(--secondairy-color);
+        color: #fff;
+        border-radius: 6px;
+        padding: 2px 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        align-self: flex-start;
+    }
+</style>
+
+<div class="rx-container">
+    <h1 class="main-title">Prescriptions</h1>
+    <p class="rx-subtitle">All prescriptions issued to @Model.PatientName</p>
+
+    @if (!Model.Prescriptions.Any())
+    {
+        <div class="rx-empty">
+            <p>No prescriptions found.</p>
+        </div>
+    }
+    else
+    {
+        <div class="rx-list">
+            @foreach (var rx in Model.Prescriptions)
+            {
+                <div class="rx-card">
+                    <div class="rx-card-header">
+                        <div>
+                            <div class="rx-doctor">@rx.DoctorName</div>
+                            <div class="rx-specialization">@rx.Specialization</div>
+                        </div>
+                        <div class="rx-date">@rx.VisitDate.ToString("dddd, dd MMM yyyy")</div>
+                    </div>
+
+                    <hr class="rx-divider" />
+
+                    <div>
+                        <div class="rx-label">Rx</div>
+                        <div class="rx-text">@rx.Prescription</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(rx.Notes))
+                    {
+                        <div>
+                            <div class="rx-label">Notes</div>
+                            <div class="rx-notes-text">@rx.Notes</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

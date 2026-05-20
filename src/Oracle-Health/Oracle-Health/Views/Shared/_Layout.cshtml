@@ -25,6 +25,8 @@
     <title>@ViewData["Title"] - Oracle Health</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+
 </head>
 <body>
     <header>
@@ -115,9 +117,9 @@
             {
                 @if (isPatient)
                 {
-                    <a href="/appointments/book" class="nav-link-item">
+                    <a href="/appointments/PatientAppointments" class="nav-link-item">
                         <img src="~/images/visit-icon.png" alt="">
-                        <span>Book</span>
+                        <span>My Appointments</span>
                     </a>
                     <a href="/appointments" class="nav-link-item">
                         <img src="~/images/appointments-icon.png" alt="">
@@ -126,6 +128,10 @@
                     <a href="/patients/history" class="nav-link-item">
                         <img src="~/images/patients.png" alt="">
                         <span>History</span>
+                    </a>
+                    <a href="/patients/prescriptions" class="nav-link-item">
+                        <span>Rx</span>
+                        <span>Prescriptions</span>
                     </a>
                 }
 
@@ -214,7 +220,7 @@
             }
             else
             {
-                <a href="/public/appointments/lookup" class="nav-link-item">
+                <a asp-controller="Lookup" asp-action="Index" class="nav-link-item">
                     <span>LU</span>
                     <span>Lookup</span>
                 </a>
