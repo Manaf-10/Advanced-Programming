@@ -281,6 +281,47 @@ nav a {
   padding: 8px 0.8%;
 }
 
+.visit-records-container {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 980px);
+}
+
+.visit-record-table {
+  width: 100%;
+  margin-left: 1.5%;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--containers-color);
+}
+
+.visit-record-grid-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.3fr) minmax(110px, 0.8fr) minmax(140px, 1.4fr) 72px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
+.visit-record-table-header {
+  color: var(--secondairy-color);
+  font-weight: 700;
+  background-color: #ffffff33;
+}
+
+.visit-record-row {
+  color: var(--secondairy-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.visit-record-row p,
+.visit-record-table-header p {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .Requested {
   color: #918e8e;
 }
@@ -383,14 +424,12 @@ nav a {
 .appointment-form-container {
   display: flex;
   flex-direction: column;
-  width: 96vw;
-  height: 94vh;
 }
 
 .appointment-split-container {
   display: flex;
   flex-direction: column;
-  width: 94vw;
+  width: 85vw;
   height: 86vh;
 }
 
@@ -521,11 +560,185 @@ form {
   margin-bottom: 8px;
 }
 
-.search-bar {
-  height: 5vh;
-  width: 20%;
-  margin: 0 2% 2% 2%;
-  align-self: center;
+.availability-page {
+  width: min(100%, 1120px);
+}
+
+.availability-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.availability-header p {
+  color: var(--secondairy-color);
+  margin-left: 1.5%;
+}
+
+.availability-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 20px;
+}
+
+.availability-week-nav a {
+  min-width: 42px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--background-color);
+  background-color: var(--clickable-items-color);
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  padding: 0 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.availability-week-nav a:hover {
+  background-color: var(--secondairy-color);
+}
+
+.availability-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 10px;
+  margin-left: 1.5%;
+}
+
+.availability-day {
+  min-height: 360px;
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.availability-today {
+  border-color: var(--input-border-color);
+}
+
+.availability-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--secondairy-color);
+  background-color: #ffffff33;
+  padding: 10px;
+}
+
+.availability-day-header strong,
+.availability-day-header span {
+  font-size: 0.95rem;
+}
+
+.availability-empty {
+  color: #5d7780;
+  padding: 14px 10px;
+}
+
+.availability-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.availability-block {
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--secondairy-color);
+  border: 1px solid var(--border-color);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background-color: #ffffff33;
+  padding: 10px;
+}
+
+.availability-block strong,
+.availability-block span,
+.availability-block p {
+  display: block;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.availability-block strong {
+  font-size: 0.95rem;
+}
+
+.availability-block span,
+.availability-block p {
+  color: #5d7780;
+  font-size: 0.82rem;
+}
+
+.availability-block-working {
+  border-left-color: #4c825c;
+}
+
+.availability-block-appointment {
+  border-left-color: #4771d3;
+}
+
+.availability-block-off {
+  border-left-color: #ff2617;
+}
+
+.patient-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(620px, 96%);
+  margin: 0 2% 24px 2%;
+}
+
+.patient-search-form input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  background-color: #ffffff66;
+  color: var(--secondairy-color);
+  padding: 0 14px;
+}
+
+.patient-search-form input:focus {
+  outline: none;
+  border-color: var(--clickable-items-color);
+}
+
+.patient-search-form button {
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--clickable-items-color);
+  color: var(--background-color);
+  font-weight: 600;
+  padding: 0 18px;
+}
+
+.patient-search-form button:hover {
+  cursor: pointer;
+  border: 1px solid var(--input-border-color);
+}
+
+.patient-search-form a {
+  color: var(--secondairy-color);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.patient-search-form a:hover {
+  text-decoration: underline;
 }
 
 .home-shell {
@@ -775,6 +988,51 @@ form {
 
 .profile-card strong {
   font-size: 1.35rem;
+}
+
+.visit-record-notes {
+  margin: 18px 1.5% 0;
+  white-space: pre-line;
+}
+
+@media (max-width: 760px) {
+  .availability-header {
+    flex-direction: column;
+  }
+
+  .availability-week-nav {
+    padding-top: 0;
+    margin-left: 1.5%;
+  }
+
+  .availability-grid {
+    grid-template-columns: 1fr;
+    margin-right: 1.5%;
+  }
+
+  .availability-day {
+    min-height: auto;
+  }
+
+  .visit-records-container {
+    width: 100%;
+  }
+
+  .visit-record-table {
+    margin-left: 0;
+  }
+
+  .visit-record-grid-row {
+    grid-template-columns: 1fr;
+  }
+
+  .visit-record-table-header {
+    display: none;
+  }
+
+  .visit-record-row {
+    gap: 6px;
+  }
 }
 
 .page-alert {

@@ -12,6 +12,8 @@ public class AppointmentListItemViewModel
 
     public string Status { get; set; } = string.Empty;
 
+    public bool CanOpenDetails { get; set; }
+
     public List<AppointmentStatusActionViewModel> StatusActions { get; set; } = new();
 }
 

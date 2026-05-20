@@ -1,0 +1,60 @@
+@model Oracle_Health.Models.ViewModels.DoctorAvailabilityViewModel
+
+@{
+    ViewData["Title"] = "Availability";
+    var weekEnd = Model.WeekStart.AddDays(6);
+}
+
+<div class="availability-page">
+    <div class="availability-header">
+        <div>
+            <h1 class="main-title">Availability</h1>
+            <p>@Model.WeekStart.ToString("dd MMM yyyy") - @weekEnd.ToString("dd MMM yyyy")</p>
+        </div>
+        <div class="availability-week-nav">
+            <a asp-controller="Doctor"
+               asp-action="MyAvailability"
+               asp-route-weekStart="@Model.PreviousWeekStart.ToString("yyyy-MM-dd")"
+               aria-label="Previous week">‹</a>
+            <a asp-controller="Doctor"
+               asp-action="MyAvailability"
+               asp-route-weekStart="@DateTime.Today.ToString("yyyy-MM-dd")">This week</a>
+            <a asp-controller="Doctor"
+               asp-action="MyAvailability"
+               asp-route-weekStart="@Model.NextWeekStart.ToString("yyyy-MM-dd")"
+               aria-label="Next week">›</a>
+        </div>
+    </div>
+
+    <div class="availability-grid">
+        @foreach (var day in Model.Days)
+        {
+            <section class="availability-day @(day.Date.Date == DateTime.Today ? "availability-today" : "")">
+                <div class="availability-day-header">
+                    <strong>@day.Date.ToString("ddd")</strong>
+                    <span>@day.Date.ToString("dd MMM")</span>
+                </div>
+
+                @if (!day.Blocks.Any())
+                {
+                    <div class="availability-empty">No schedule</div>
+                }
+                else
+                {
+                    <div class="availability-blocks">
+                        @foreach (var block in day.Blocks)
+                        {
+                            <article class="availability-block availability-block-@block.Type">
+                                <div>
+                                    <strong>@block.Title</strong>
+                                    <span>@block.Detail</span>
+                                </div>
+                                <p>@block.StartTime.ToString("hh:mm tt") - @block.EndTime.ToString("hh:mm tt")</p>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        }
+    </div>
+</div>
