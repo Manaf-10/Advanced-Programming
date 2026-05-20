@@ -1,0 +1,142 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.report-header,
+.report-auth {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  align-items: flex-start;
+  margin: 32px 0;
+}
+
+.report-auth {
+  align-items: center;
+}
+
+.eyebrow {
+  color: #7d1717;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.report-card {
+  background: #fff;
+  border: 1px solid #ded8d2;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.08);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-grid span,
+.status-list span {
+  color: #5f5a55;
+}
+
+.metric-grid strong,
+.large-metric {
+  display: block;
+  color: #241f1a;
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.report-two-column {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: 24px;
+}
+
+table {
+  width: 100%;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eee8e1;
+}
+
+.status-list > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee8e1;
+}
+
+.report-form {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 10px;
+}
+
+.report-form input {
+  min-height: 42px;
+  border: 1px solid #cfc8c0;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.report-form button,
+.secondary-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: #7d1717;
+  color: white;
+  font-weight: 700;
+}
+
+.secondary-button {
+  background: #3d3935;
+}
+
+@media (max-width: 800px) {
+  .report-header,
+  .report-auth,
+  .report-two-column {
+    display: block;
+  }
+
+  .report-card {
+    margin-bottom: 16px;
+  }
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

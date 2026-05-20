@@ -1,0 +1,83 @@
+@model Oracle_Health.Reporting.Models.ReportsDashboardViewModel
+
+@{
+    ViewData["Title"] = "Manager Reports";
+}
+
+<section class="report-header">
+    <div>
+        <p class="eyebrow">Clinic Manager</p>
+        <h1>Operational reports</h1>
+        <p>Signed in as @Model.ManagerName. Data is retrieved from the Web API using JWT.</p>
+    </div>
+    <form asp-controller="Reports" asp-action="Logout" method="post">
+        <button type="submit" class="secondary-button">Sign out</button>
+    </form>
+</section>
+
+<section class="metric-grid">
+    <article class="report-card">
+        <span>Total appointments</span>
+        <strong>@Model.Summary?.TotalAppointments</strong>
+    </article>
+    <article class="report-card">
+        <span>Upcoming</span>
+        <strong>@Model.Summary?.UpcomingAppointments</strong>
+    </article>
+    <article class="report-card">
+        <span>Completed this month</span>
+        <strong>@Model.Summary?.CompletedThisMonth</strong>
+    </article>
+    <article class="report-card">
+        <span>Doctors</span>
+        <strong>@Model.Summary?.ActiveDoctors</strong>
+    </article>
+    <article class="report-card">
+        <span>Patients</span>
+        <strong>@Model.Summary?.RegisteredPatients</strong>
+    </article>
+</section>
+
+<section class="report-two-column">
+    <article class="report-card">
+        <h2>Doctor workload</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Total</th>
+                    <th>Completed</th>
+                    <th>Cancelled/Missed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var doctor in Model.DoctorWorkload)
+                {
+                    <tr>
+                        <td>@doctor.DoctorName</td>
+                        <td>@doctor.TotalAppointments</td>
+                        <td>@doctor.CompletedAppointments</td>
+                        <td>@doctor.CancelledOrMissedAppointments</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </article>
+
+    <article class="report-card">
+        <h2>Cancellations and missed</h2>
+        <div class="large-metric">@Model.Cancellations?.CancelledOrMissedRate%</div>
+        <p>@Model.Cancellations?.CancelledAppointments cancelled, @Model.Cancellations?.MissedAppointments missed, out of @Model.Cancellations?.TotalAppointments appointments.</p>
+
+        <h2>Status breakdown</h2>
+        <div class="status-list">
+            @foreach (var item in Model.AppointmentStatuses)
+            {
+                <div>
+                    <span>@item.Status</span>
+                    <strong>@item.Count</strong>
+                </div>
+            }
+        </div>
+    </article>
+</section>
