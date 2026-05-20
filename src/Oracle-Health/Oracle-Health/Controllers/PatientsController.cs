@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
-using System.Security.Claims;
 
 namespace Oracle_Health.Controllers;
 
@@ -107,7 +106,7 @@ public class PatientsController : Controller
         return View("~/Views/Patients/Prescriptions.cshtml", viewModel);
     }
 
-    public async Task<IActionResult> List()
+    public async Task<IActionResult> List(string? searchTerm)
     {
         IQueryable<Patient> patientQuery = _context.Patients
             .AsNoTracking()

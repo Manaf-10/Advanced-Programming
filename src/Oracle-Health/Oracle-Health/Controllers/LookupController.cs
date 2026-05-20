@@ -57,7 +57,7 @@ public class LookupController : Controller
                 var errorMessage = await response.Content.ReadAsStringAsync();
 
                 ModelState.AddModelError(string.Empty,
-                    "No appointment information found.");
+                    "No appointment information found. Please check Patient Number and CPR");
 
                 return View(viewModel);
             }
