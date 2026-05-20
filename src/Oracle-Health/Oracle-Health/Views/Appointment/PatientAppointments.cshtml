@@ -1,0 +1,109 @@
+﻿@model List<Oracle_Health.Models.ViewModels.AppointmentListItemViewModel>
+
+@{
+    ViewData["Title"] = "My Appointments";
+}
+
+<style>
+    .appointments-container {
+        display: flex;
+        flex-direction: column;
+        width: 95%;
+        margin: 0 auto;
+        padding-top: 1%;
+    }
+
+    .appointments-header-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5%;
+    }
+
+    .appointments-subtitle {
+        color: #666;
+        margin-left: 1%;
+        font-weight: 400;
+    }
+
+    .three-items-cell {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        background-color: var(--containers-color);
+        width: 100%;
+        padding: 12px 1%;
+        border-bottom: 1px solid var(--border-color);
+        align-items: center;
+    }
+
+    .appointments-container-header {
+        font-weight: 700;
+        color: var(--secondairy-color);
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .three-items-cell:not(.appointments-container-header):hover {
+        background-color: var(--active-item-color);
+    }
+
+    .appointments-empty {
+        background-color: var(--containers-color);
+        padding: 40px;
+        text-align: center;
+        color: #888;
+        border-radius: 9px;
+        border: 1px solid var(--border-color);
+        margin-top: 1%;
+    }
+
+    .book-new-btn {
+        background-color: var(--clickable-items-color);
+        border-radius: 9px;
+        color: var(--background-color);
+        padding: 8px 20px;
+        border: none;
+        font-family: inherit;
+        font-size: 0.95rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .book-new-btn:hover {
+            opacity: 0.9;
+            color: var(--background-color);
+        }
+</style>
+
+<div class="appointments-container">
+    <div class="appointments-header-row">
+        <div>
+            <h1 class="main-title">My Appointments</h1>
+            <p class="appointments-subtitle">All your upcoming and past appointments.</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="appointments-empty">
+            <p>You have no appointments yet. Please contact the reseption to book a appointment.</p>
+        </div>
+    }
+    else
+    {
+        <div class="three-items-cell appointments-container-header">
+            <span>Doctor</span>
+            <span>Date</span>
+            <span>Status</span>
+        </div>
+
+        @foreach (var appointment in Model)
+        {
+            <div class="three-items-cell">
+                <span class="appointments-cell">@appointment.DoctorName</span>
+                <span class="appointments-cell">@appointment.Date.ToString("dddd, dd MMM yyyy | hh:mm tt")</span>
+                <span class="@appointment.Status.Replace(" ", "-")">@appointment.Status</span>
+            </div>
+        }
+    }
+</div>

@@ -1,8 +1,0 @@
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\mohoh\Documents\GitHub\Advanced Programming\Advanced-Programming\src\Oracle-Health\Oracle-Health.Api\obj\Debug\net9.0\staticwebassets.build.json

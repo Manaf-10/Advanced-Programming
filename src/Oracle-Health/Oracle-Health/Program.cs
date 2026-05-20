@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using Oracle_Health.Data;
 using Oracle_Health.Hubs;
 using Oracle_Health.Models;
@@ -30,6 +31,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ClinicManagementSystemContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddHttpClient("OracleHealthApi", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7174/");
+});
 var app = builder.Build();
 
 await DatabaseSeeder.SeedAsync(app.Services);
