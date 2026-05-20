@@ -5,9 +5,10 @@
     "\\src",
     "\\src\\Oracle-Health",
     "\\src\\Oracle-Health\\Oracle-Health",
-    "\\src\\Oracle-Health\\Oracle-Health\\wwwroot",
-    "\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css"
+    "\\src\\Oracle-Health\\Oracle-Health\\Models",
+    "\\src\\Oracle-Health\\Oracle-Health\\Views",
+    "\\src\\Oracle-Health\\Oracle-Health\\wwwroot"
   ],
-  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health\\wwwroot\\css\\site.css",
+  "SelectedNode": "\\src\\Oracle-Health\\Oracle-Health\\Models\\Doctor.cs",
   "PreviewInSolutionExplorer": false
 }
