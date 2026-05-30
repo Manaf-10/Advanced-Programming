@@ -13,6 +13,34 @@
 
 ![erd-image](./assets/erd_img.png)
 
+## User Credentials
+
+All seeded users use the password `Password123!`.
+
+| Role | Name | Email | Password |
+| --- | --- | --- | --- |
+| Admin / Clinic Manager | Mariam Al Haddad | `manager@oraclehealth.test` | `Password123!` |
+| Reception | Noor Khalil | `reception@oraclehealth.test` | `Password123!` |
+| Doctor | Ahmed Naser | `ahmed.naser@oraclehealth.test` | `Password123!` |
+| Doctor | Sara Mansoor | `sara.mansoor@oraclehealth.test` | `Password123!` |
+| Patient | Ali Hassan | `ali.hassan@oraclehealth.test` | `Password123!` |
+| Patient | Fatima Saleh | `fatima.saleh@oraclehealth.test` | `Password123!` |
+| Patient | Omar Yousif | `omar.yousif@oraclehealth.test` | `Password123!` |
+
+### Patient Lookup Details
+
+| Patient | Patient Reference | CPR |
+| --- | --- | --- |
+| Ali Hassan | `10001` | `900101123` |
+| Fatima Saleh | `10002` | `910202456` |
+| Omar Yousif | `10003` | `920303789` |
+
+## Environment Variables
+
+Create a local `.env` file from `.env.example` before running the project. The real `.env` file is ignored by Git so local connection strings and secrets are not committed.
+
+The project uses ASP.NET Core environment variable names with double underscores, for example `Jwt__Secret` maps to `Jwt:Secret` and `ConnectionStrings__DefaultConnection` maps to `ConnectionStrings:DefaultConnection`.
+
 ## Routing Table
 
 
