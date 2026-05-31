@@ -71,6 +71,7 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | POST | `/Lookup` | Public | Lookup appointments by CPR and patient reference through the API | Finished |
 | GET | `/api/appointments/lookup` | Public API | Lookup active appointments by CPR and patient reference | Finished |
 | POST | `/api/public/appointments/lookup` | Public API | Lookup upcoming appointments and recent visits by CPR and patient reference | Finished |
+| PUT | `/api/appointments/{id}` | Clinic Manager API | Update appointment details with schedule and overlap conflict checks | Finished |
 | HUB | `/hubs/appointments` | Staff | SignalR hub used for live appointment status updates | Finished |
 | GET | `/appointments/book` | Staff | Display appointment booking form | Not finished |
 | POST | `/appointments/book` | Staff | Create a new appointment | Not finished |
@@ -80,12 +81,14 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | Method | Route | Access | Description | Status |
 | --- | --- | --- | --- | --- |
 | GET | `/Patients/History` | Patient | Display the current patient's full visit history | Finished |
+| GET | `/api/patients/{id}/history` | Staff API | Return a patient's visit history as JSON | Finished |
 | GET | `/visit-records/{id}` | Doctor | Display visit diagnosis, doctor notes, and prescriptions | Finished |
 | POST | `/Appointments/UpdateDetails` | Doctor | Create or update a visit record when completing an appointment | Finished |
 | POST | `/Appointments/UpdateDetails` | Doctor | Save prescription text linked to a completed visit | Finished |
 | GET | `/patients/prescriptions` | Patient | Display the current patient's prescriptions | Finished |
 | GET | `/patients/{id}/history` | Staff | Display any patient's full visit history | Not finished |
 | GET | `/prescriptions/{id}` | Staff and the Patient | Display a single prescription for an authorized user | Not finished |
+| GET | `/api/prescriptions/{id}` | Authorized API | Return prescription details for authorized staff, patient, or prescribing doctor | Finished |
 
 ### Doctor
 
@@ -121,6 +124,9 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | GET | `/api/reports/doctor-workload` | Clinic Manager API | Return doctor workload and utilization report data | Finished |
 | GET | `/api/reports/cancellations` | Clinic Manager API | Return cancellation and missed appointment report data | Finished |
 | GET | `/api/reports/appointment-status` | Clinic Manager API | Return appointment status breakdown data | Finished |
+| GET | `/api/reports/recent-patients` | Clinic Manager API | Return recent patient visit report data | Finished |
+| POST | `/api/doctors/{id}/availability` | Clinic Manager API | Create doctor availability or leave with impact checks | Finished |
+| GET | `/api/users/staff` | Clinic Manager API | List staff users for management visibility | Finished |
 | GET | `/doctors/{id}` | Clinic Manager | Display doctor details and edit form | Finished |
 | PUT | `/doctors/{id}` | Clinic Manager | Update doctor profile details | Finished |
 | PUT | `/appointments/{id}` | Clinic Manager | Update appointment details | Finished |
@@ -130,7 +136,7 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 
 | Method | Route | Access | Description | Status |
 | --- | --- | --- | --- | --- |
-| GET | `/specializations` | Staff | List specializations | Not finished |
-| POST | `/specializations` | Clinic Manager | Create specialization | Not finished |
-| PUT | `/specializations/{id}` | Clinic Manager | Edit specialization | Not finished |
-| POST | `/doctors/{id}/specializations` | Clinic Manager | Assign specialization to doctor | Not finished |
+| GET | `/specializations` | Staff | List specializations | Finished |
+| POST | `/specializations` | Clinic Manager | Create specialization | Finished |
+| PUT | `/specializations/{id}` | Clinic Manager | Edit specialization | Finished |
+| POST | `/doctors/{id}/specializations` | Clinic Manager | Assign specialization to doctor | Finished |

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Oracle_Health.Api.Services;
 using Oracle_Health.Data;
 using Oracle_Health.Models;
+using Oracle_Health.Services;
 
 LoadDotEnv();
 
@@ -37,6 +38,7 @@ builder.Services
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
 
 var app = builder.Build();
 

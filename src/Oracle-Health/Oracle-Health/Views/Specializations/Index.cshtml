@@ -1,0 +1,121 @@
+@model Oracle_Health.Models.ViewModels.SpecializationIndexViewModel
+
+@{
+    ViewData["Title"] = "Specializations";
+}
+
+<section class="manager-detail-page">
+    <div class="manager-page-header">
+        <div>
+            <h1 class="main-title">Specializations</h1>
+            <p>Manage clinic specializations and assign them to doctors.</p>
+        </div>
+    </div>
+
+    @if (User.IsInRole("Clinic Manager"))
+    {
+        <article class="manager-panel">
+            <h2>Create specialization</h2>
+            <form action="/specializations" method="post" class="manager-form">
+                @Html.AntiForgeryToken()
+                <div class="manager-form-grid">
+                    <label>
+                        <span>Specialization name</span>
+                        <input name="Name" maxlength="100" required />
+                    </label>
+                </div>
+                <button type="submit" class="custom-button manager-button">Create</button>
+            </form>
+        </article>
+
+        <article class="manager-panel">
+            <h2>Assign specialization to doctor</h2>
+            <form id="assign-specialization-form" method="post" class="manager-form">
+                @Html.AntiForgeryToken()
+                <div class="manager-form-grid">
+                    <label>
+                        <span>Doctor</span>
+                        <select name="DoctorId" id="assign-doctor" required>
+                            <option value="">Select doctor</option>
+                            @foreach (var doctor in Model.Doctors)
+                            {
+                                <option value="@doctor.Id">@doctor.Label</option>
+                            }
+                        </select>
+                    </label>
+                    <label>
+                        <span>Specialization</span>
+                        <select name="SpecializationId" required>
+                            <option value="">Select specialization</option>
+                            @foreach (var specialization in Model.SpecializationOptions)
+                            {
+                                <option value="@specialization.Id">@specialization.Label</option>
+                            }
+                        </select>
+                    </label>
+                </div>
+                <button type="submit" class="custom-button manager-button">Assign</button>
+            </form>
+        </article>
+    }
+
+    <article class="manager-panel">
+        <h2>Current specializations</h2>
+        @if (!Model.Specializations.Any())
+        {
+            <p>No specializations have been added.</p>
+        }
+        else
+        {
+            <div class="specialization-list">
+                @foreach (var specialization in Model.Specializations)
+                {
+                    <div class="specialization-row">
+                        <div>
+                            <strong>@specialization.Name</strong>
+                            <p>
+                                @(specialization.Doctors.Any()
+                                    ? string.Join(", ", specialization.Doctors)
+                                    : "No doctors assigned")
+                            </p>
+                        </div>
+
+                        @if (User.IsInRole("Clinic Manager"))
+                        {
+                            <form action="/specializations/@specialization.Id" method="post" class="specialization-edit-form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="Id" value="@specialization.Id" />
+                                <label>
+                                    <span>Edit name</span>
+                                    <input name="Name" value="@specialization.Name" maxlength="100" required />
+                                </label>
+                                <button type="submit" class="appointment-status-button">Update</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </article>
+</section>
+
+@section Scripts {
+    <script>
+        const assignForm = document.getElementById('assign-specialization-form');
+        const doctorSelect = document.getElementById('assign-doctor');
+
+        if (assignForm && doctorSelect) {
+            assignForm.addEventListener('submit', function (event) {
+                const doctorId = doctorSelect.value;
+
+                if (!doctorId) {
+                    event.preventDefault();
+                    return;
+                }
+
+                assignForm.action = `/doctors/${doctorId}/specializations`;
+            });
+        }
+    </script>
+}
+

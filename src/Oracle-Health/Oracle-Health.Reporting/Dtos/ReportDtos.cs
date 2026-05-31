@@ -21,3 +21,10 @@ public record CancellationReport(
     decimal CancelledOrMissedRate);
 
 public record AppointmentStatusReportItem(string Status, int Count);
+
+public record RecentPatientReportItem(
+    long PatientId,
+    string PatientName,
+    DateTime LastVisitDate,
+    string DoctorName,
+    string Summary);

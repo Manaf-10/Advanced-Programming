@@ -89,4 +89,27 @@ public class ReportsController : ControllerBase
                 item.Count))
             .ToList();
     }
+
+    [HttpGet("recent-patients")]
+    public async Task<ActionResult<IReadOnlyList<RecentPatientReportItem>>> RecentPatients()
+    {
+        var items = await _context.Visits
+            .AsNoTracking()
+            .Include(item => item.Appointment)
+            .Include(item => item.Patient)
+                .ThenInclude(patient => patient.User)
+            .Include(item => item.Doctor)
+                .ThenInclude(doctor => doctor.User)
+            .OrderByDescending(item => item.Appointment.Date)
+            .Take(6)
+            .Select(item => new RecentPatientReportItem(
+                item.PatientId,
+                item.Patient.User.FirstName + " " + item.Patient.User.LastName,
+                item.Appointment.Date,
+                "Dr. " + item.Doctor.User.FirstName + " " + item.Doctor.User.LastName,
+                item.Notes))
+            .ToListAsync();
+
+        return items;
+    }
 }

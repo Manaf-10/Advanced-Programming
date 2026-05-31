@@ -38,7 +38,8 @@ public class ClinicApiService : IClinicApiService
             Summary = await _http.GetFromJsonAsync<ClinicSummaryReport>("api/reports/summary"),
             DoctorWorkload = await _http.GetFromJsonAsync<IReadOnlyList<DoctorWorkloadReportItem>>("api/reports/doctor-workload") ?? [],
             Cancellations = await _http.GetFromJsonAsync<CancellationReport>("api/reports/cancellations"),
-            AppointmentStatuses = await _http.GetFromJsonAsync<IReadOnlyList<AppointmentStatusReportItem>>("api/reports/appointment-status") ?? []
+            AppointmentStatuses = await _http.GetFromJsonAsync<IReadOnlyList<AppointmentStatusReportItem>>("api/reports/appointment-status") ?? [],
+            RecentPatients = await _http.GetFromJsonAsync<IReadOnlyList<RecentPatientReportItem>>("api/reports/recent-patients") ?? []
         };
     }
 
