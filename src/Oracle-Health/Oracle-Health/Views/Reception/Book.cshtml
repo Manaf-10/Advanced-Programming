@@ -1,0 +1,162 @@
+@model Oracle_Health.Models.ViewModels.AppointmentBookingViewModel
+
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<section class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase text-secondary fw-semibold mb-2">Reception Workspace</p>
+                            <h1 class="h2 mb-2">Book Appointment</h1>
+                            <p class="text-muted mb-0">
+                                Choose a specialization, doctor, patient, and an available slot. The system checks
+                                schedule availability and prevents double bookings automatically.
+                            </p>
+                        </div>
+                        <div class="bg-light rounded-4 px-4 py-3">
+                            <div class="small text-muted">Common durations</div>
+                            <div class="fw-semibold">15, 30, 45, or 60 minutes</div>
+                        </div>
+                    </div>
+
+                    <form method="post" class="row g-4">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        @if (Model.CanSelectPatient)
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="SelectedPatientId" class="form-label"></label>
+                                <select asp-for="SelectedPatientId" class="form-select">
+                                    <option value="">Select patient</option>
+                                    @foreach (var patient in Model.Patients)
+                                    {
+                                        <option value="@patient.Id">
+                                            @patient.FullName | Ref: @patient.PatientReference | CPR: @patient.Cpr
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="SelectedPatientId" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <input asp-for="SelectedPatientId" type="hidden" />
+                        }
+
+                        <div class="col-md-6">
+                            <label asp-for="SelectedSpecializationId" class="form-label"></label>
+                            <select asp-for="SelectedSpecializationId" class="form-select" id="specialization-select">
+                                <option value="">Any specialization</option>
+                                @foreach (var specialization in Model.Specializations)
+                                {
+                                    <option value="@specialization.Id">@specialization.Label</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedSpecializationId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="SelectedDoctorId" class="form-label"></label>
+                            <select asp-for="SelectedDoctorId" class="form-select" id="doctor-select">
+                                <option value="">Select doctor</option>
+                                @foreach (var doctor in Model.Doctors)
+                                {
+                                    <option value="@doctor.Id"
+                                            data-specializations="@string.Join(",", doctor.SpecializationIds)">
+                                        @doctor.FullName | @doctor.SpecializationSummary
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedDoctorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="AppointmentTime" class="form-label"></label>
+                            <input asp-for="AppointmentTime" class="form-control" />
+                            <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="DurationMinutes" class="form-label"></label>
+                            <select asp-for="DurationMinutes" class="form-select">
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="45">45 minutes</option>
+                                <option value="60">60 minutes</option>
+                            </select>
+                            <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3 d-flex align-items-end">
+                            <div class="w-100 bg-light rounded-3 p-3">
+                                <div class="small text-muted">Initial status</div>
+                                <div class="fw-semibold">@(User.IsInRole("Patient") ? "Requested" : "Confirmed")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-light border rounded-4 mb-0">
+                                <strong>Booking notes:</strong>
+                                Appointments must fit a doctor working schedule, avoid leave periods, and cannot overlap
+                                with any active booking for the same doctor.
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-flex gap-3 flex-wrap">
+                            <button type="submit" class="btn btn-dark px-4">Save Appointment</button>
+                            <a href="/appointments" class="btn btn-outline-secondary px-4">Back to Appointments</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const specializationSelect = document.getElementById("specialization-select");
+        const doctorSelect = document.getElementById("doctor-select");
+
+        function filterDoctors() {
+            const selectedSpecialization = specializationSelect.value;
+            Array.from(doctorSelect.options).forEach(option => {
+                if (!option.value) {
+                    option.hidden = false;
+                    return;
+                }
+
+                if (!selectedSpecialization) {
+                    option.hidden = false;
+                    return;
+                }
+
+                const specializationIds = (option.dataset.specializations || "")
+                    .split(",")
+                    .filter(Boolean);
+
+                option.hidden = !specializationIds.includes(selectedSpecialization);
+            });
+
+            if (doctorSelect.selectedOptions.length && doctorSelect.selectedOptions[0].hidden) {
+                doctorSelect.value = "";
+            }
+        }
+
+        specializationSelect.addEventListener("change", filterDoctors);
+        filterDoctors();
+    </script>
+}

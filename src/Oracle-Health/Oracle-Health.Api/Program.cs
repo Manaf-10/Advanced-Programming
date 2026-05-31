@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Oracle_Health.Data;
 using Oracle_Health.Models;
 
+LoadDotEnv();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -49,3 +51,55 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static void LoadDotEnv()
+{
+    var envPath = FindDotEnvPath();
+    if (envPath is null)
+    {
+        return;
+    }
+
+    foreach (var line in File.ReadAllLines(envPath))
+    {
+        var trimmedLine = line.Trim();
+        if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith('#'))
+        {
+            continue;
+        }
+
+        var separatorIndex = trimmedLine.IndexOf('=');
+        if (separatorIndex <= 0)
+        {
+            continue;
+        }
+
+        var key = trimmedLine[..separatorIndex].Trim();
+        var value = trimmedLine[(separatorIndex + 1)..].Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+        {
+            Environment.SetEnvironmentVariable(key, value);
+        }
+    }
+}
+
+static string? FindDotEnvPath()
+{
+    foreach (var startPath in new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory })
+    {
+        var directory = new DirectoryInfo(startPath);
+        while (directory is not null)
+        {
+            var envPath = Path.Combine(directory.FullName, ".env");
+            if (File.Exists(envPath))
+            {
+                return envPath;
+            }
+
+            directory = directory.Parent;
+        }
+    }
+
+    return null;
+}

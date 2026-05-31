@@ -1,0 +1,129 @@
+@model Oracle_Health.Models.ViewModels.LiveBoardViewModel
+
+@{
+    ViewData["Title"] = "Live Board";
+}
+
+<section class="container py-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+        <div>
+            <p class="text-uppercase text-secondary fw-semibold mb-2">Reception Workspace</p>
+            <h1 class="h2 mb-2">Live Appointment Board</h1>
+            <p class="text-muted mb-0">
+                Real-time queue view for the waiting room and reception desk. Statuses refresh automatically when
+                appointment states change.
+            </p>
+        </div>
+        <div id="live-board-connection-state" class="badge text-bg-secondary px-3 py-2">Connecting...</div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Waiting / Checked-In</div>
+                    <div class="display-6 fw-semibold">@Model.WaitingCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body">
+                    <div class="text-muted small">In Progress</div>
+                    <div class="display-6 fw-semibold">@Model.InProgressCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Completed Today</div>
+                    <div class="display-6 fw-semibold">@Model.FinishedCount</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Specializations</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Items.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No appointments scheduled for @Model.BoardDate.ToString("dd MMM yyyy").</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr data-appointment-id="@item.AppointmentId">
+                                    <td>
+                                        <div class="fw-semibold">@item.Time.ToString("hh:mm tt")</div>
+                                        <div class="small text-muted">until @item.EndTime.ToString("hh:mm tt")</div>
+                                    </td>
+                                    <td>@item.PatientName</td>
+                                    <td>@item.DoctorName</td>
+                                    <td>@string.Join(", ", item.Specializations)</td>
+                                    <td>
+                                        <span class="badge rounded-pill text-bg-dark live-board-status">@item.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        const connectionBadge = document.getElementById("live-board-connection-state");
+        const boardConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/appointments")
+            .withAutomaticReconnect()
+            .build();
+
+        function setConnectionState(message, connected) {
+            connectionBadge.textContent = message;
+            connectionBadge.className = connected
+                ? "badge text-bg-success px-3 py-2"
+                : "badge text-bg-secondary px-3 py-2";
+        }
+
+        boardConnection.on("AppointmentStatusChanged", (appointmentId, status) => {
+            const row = document.querySelector(`[data-appointment-id="${appointmentId}"]`);
+            if (!row) {
+                return;
+            }
+
+            const statusBadge = row.querySelector(".live-board-status");
+            statusBadge.textContent = status;
+            row.classList.add("table-warning");
+            window.setTimeout(() => row.classList.remove("table-warning"), 1400);
+        });
+
+        boardConnection.onreconnecting(() => setConnectionState("Reconnecting...", false));
+        boardConnection.onreconnected(() => setConnectionState("Live", true));
+        boardConnection.onclose(() => setConnectionState("Disconnected", false));
+
+        boardConnection
+            .start()
+            .then(() => setConnectionState("Live", true))
+            .catch(() => setConnectionState("Connection failed", false));
+    </script>
+}
