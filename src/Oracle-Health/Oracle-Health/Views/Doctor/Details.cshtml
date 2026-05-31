@@ -1,0 +1,199 @@
+@model Oracle_Health.Models.ViewModels.ManagerDoctorDetailsViewModel
+
+@{
+    ViewData["Title"] = "Manage Doctor";
+}
+
+<section class="manager-detail-page">
+    <div class="manager-page-header">
+        <div>
+            <h1 class="main-title">Manage @Model.FullName</h1>
+            <p>Update the doctor's profile, availability, and assigned appointments.</p>
+        </div>
+        <a class="nav-text-link" asp-controller="Doctor" asp-action="Index">Back to doctors</a>
+    </div>
+
+    <article class="manager-panel">
+        <h2>Doctor profile</h2>
+        <form action="/doctors/@Model.DoctorId" method="post" class="manager-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="DoctorId" value="@Model.Profile.DoctorId" />
+
+            <div class="manager-form-grid">
+                <label>
+                    <span>First name</span>
+                    <input name="FirstName" value="@Model.Profile.FirstName" required maxlength="100" />
+                </label>
+                <label>
+                    <span>Last name</span>
+                    <input name="LastName" value="@Model.Profile.LastName" required maxlength="100" />
+                </label>
+                <label>
+                    <span>Email</span>
+                    <input type="email" name="Email" value="@Model.Profile.Email" required maxlength="255" />
+                </label>
+            </div>
+
+            <button type="submit" class="custom-button manager-button">Save profile</button>
+        </form>
+    </article>
+
+    <article class="manager-panel">
+        <h2>Add availability</h2>
+        <form action="/doctors/@Model.DoctorId/availability" method="post" class="manager-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
+
+            <div class="manager-form-grid">
+                <label>
+                    <span>Date</span>
+                    <input type="date" name="Date" value="@Model.NewAvailability.Date?.ToString("yyyy-MM-dd")" required />
+                </label>
+                <label>
+                    <span>Start time</span>
+                    <input type="time" name="StartTime" value="@Model.NewAvailability.StartTime?.ToString(@"hh\:mm")" required />
+                </label>
+                <label>
+                    <span>End time</span>
+                    <input type="time" name="EndTime" value="@Model.NewAvailability.EndTime?.ToString(@"hh\:mm")" required />
+                </label>
+                <label class="manager-check">
+                    <input type="checkbox" name="IsOnLeave" value="true" />
+                    <span>Mark as leave</span>
+                </label>
+            </div>
+
+            <button type="submit" class="custom-button manager-button">Save availability</button>
+        </form>
+    </article>
+
+    <article class="manager-panel">
+        <h2>Current availability</h2>
+        @if (!Model.Availability.Any())
+        {
+            <p>No availability records have been added.</p>
+        }
+        else
+        {
+            <div class="manager-stack">
+                @foreach (var availability in Model.Availability)
+                {
+                    <form action="/doctors/@Model.DoctorId/availability" method="post" class="manager-inline-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ScheduleId" value="@availability.ScheduleId" />
+                        <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
+
+                        <label>
+                            <span>Date</span>
+                            <input type="date" name="Date" value="@availability.Date?.ToString("yyyy-MM-dd")" required />
+                        </label>
+                        <label>
+                            <span>Start</span>
+                            <input type="time" name="StartTime" value="@availability.StartTime?.ToString(@"hh\:mm")" required />
+                        </label>
+                        <label>
+                            <span>End</span>
+                            <input type="time" name="EndTime" value="@availability.EndTime?.ToString(@"hh\:mm")" required />
+                        </label>
+                        <label class="manager-check">
+                            <input type="checkbox" name="IsOnLeave" value="true" checked="@availability.IsOnLeave" />
+                            <span>Leave</span>
+                        </label>
+                        <button type="submit" class="appointment-status-button">Update</button>
+                    </form>
+                }
+            </div>
+        }
+    </article>
+
+    <article class="manager-panel">
+        <h2>Appointments</h2>
+        @if (!Model.Appointments.Any())
+        {
+            <p>No appointments assigned to this doctor.</p>
+        }
+        else
+        {
+            <div class="manager-stack">
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <form action="/appointments/@appointment.AppointmentId" method="post" class="manager-appointment-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="AppointmentId" value="@appointment.AppointmentId" />
+
+                        <div class="manager-appointment-title">
+                            <strong>@appointment.PatientName</strong>
+                            <span>@appointment.AppointmentDate?.ToString("dd MMM yyyy") @appointment.AppointmentTime?.ToString(@"hh\:mm")</span>
+                        </div>
+
+                        <label>
+                            <span>Patient</span>
+                            <select name="PatientId" required>
+                                @foreach (var patient in Model.Patients)
+                                {
+                                    if (patient.Id == appointment.PatientId)
+                                    {
+                                        <option value="@patient.Id" selected>@patient.Label</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@patient.Id">@patient.Label</option>
+                                    }
+                                }
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Doctor</span>
+                            <select name="DoctorId" required>
+                                @foreach (var doctor in Model.Doctors)
+                                {
+                                    if (doctor.Id == appointment.DoctorId)
+                                    {
+                                        <option value="@doctor.Id" selected>@doctor.Label</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@doctor.Id">@doctor.Label</option>
+                                    }
+                                }
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Date</span>
+                            <input type="date" name="AppointmentDate" value="@appointment.AppointmentDate?.ToString("yyyy-MM-dd")" required />
+                        </label>
+                        <label>
+                            <span>Time</span>
+                            <input type="time" name="AppointmentTime" value="@appointment.AppointmentTime?.ToString(@"hh\:mm")" required />
+                        </label>
+                        <label>
+                            <span>Duration</span>
+                            <input type="number" name="DurationMinutes" value="@appointment.DurationMinutes" min="15" max="120" required />
+                        </label>
+                        <label>
+                            <span>Status</span>
+                            <select name="Status">
+                                @foreach (var status in Model.Statuses)
+                                {
+                                    if ((int)status.Id == appointment.Status)
+                                    {
+                                        <option value="@status.Id" selected>@status.Label</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@status.Id">@status.Label</option>
+                                    }
+                                }
+                            </select>
+                        </label>
+
+                        <button type="submit" class="appointment-status-button">Update appointment</button>
+                    </form>
+                }
+            </div>
+        }
+    </article>
+</section>
+

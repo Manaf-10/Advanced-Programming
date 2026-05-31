@@ -121,10 +121,10 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | GET | `/api/reports/doctor-workload` | Clinic Manager API | Return doctor workload and utilization report data | Finished |
 | GET | `/api/reports/cancellations` | Clinic Manager API | Return cancellation and missed appointment report data | Finished |
 | GET | `/api/reports/appointment-status` | Clinic Manager API | Return appointment status breakdown data | Finished |
-| GET | `/doctors/{id}` | Clinic Manager | Display doctor details and edit form | Not finished |
-| PUT | `/doctors/{id}` | Clinic Manager | Update doctor profile details | Not finished |
-| PUT | `/appointments/{id}` | Clinic Manager | Update appointment details | Not finished |
-| POST | `/doctors/{id}/availability` | Clinic Manager | Create or update doctor availability | Not finished |
+| GET | `/doctors/{id}` | Clinic Manager | Display doctor details and edit form | Finished |
+| PUT | `/doctors/{id}` | Clinic Manager | Update doctor profile details | Finished |
+| PUT | `/appointments/{id}` | Clinic Manager | Update appointment details | Finished |
+| POST | `/doctors/{id}/availability` | Clinic Manager | Create or update doctor availability | Finished |
 
 ### Specializations
 
