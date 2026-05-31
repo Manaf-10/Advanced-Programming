@@ -19,8 +19,8 @@ All seeded users use the password `Password123!`.
 
 | Role | Name | Email | Password |
 | --- | --- | --- | --- |
-| Admin / Clinic Manager | Mariam Al Haddad | `manager@oraclehealth.test` | `Password123!` |
-| Reception | Noor Khalil | `reception@oraclehealth.test` | `Password123!` |
+| Clinic Manager | Mariam Al Haddad | `manager@oraclehealth.test` | `Password123!` |
+| Receptionist | Noor Khalil | `reception@oraclehealth.test` | `Password123!` |
 | Doctor | Ahmed Naser | `ahmed.naser@oraclehealth.test` | `Password123!` |
 | Doctor | Sara Mansoor | `sara.mansoor@oraclehealth.test` | `Password123!` |
 | Patient | Ali Hassan | `ali.hassan@oraclehealth.test` | `Password123!` |
@@ -64,7 +64,7 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | --- | --- | --- | --- | --- |
 | GET | `/Appointments` | Authenticated | Display appointment list for the current role | Finished |
 | GET | `/Appointments/Details/{id}` | Doctor | Display appointment visit/details form for in-progress appointments | Finished |
-| POST | `/Appointments/UpdateStatus` | Admin, Reception, Doctor | Update appointment status and broadcast live update via SignalR | Finished |
+| POST | `/Appointments/UpdateStatus` | Clinic Manager, Receptionist, Doctor | Update appointment status and broadcast live update via SignalR | Finished |
 | POST | `/Appointments/UpdateDetails` | Doctor | Save visit details and complete an appointment | Finished |
 | GET | `/Appointments/PatientAppointments` | Patient | Display the current patient's appointments | Finished |
 | GET | `/Lookup` | Public | Display public appointment lookup form | Finished |

@@ -1,9 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Oracle_Health.Api.Dtos;
+using Oracle_Health.Api.Services;
 using Oracle_Health.Models;
 using Oracle_Health.Services;
 
@@ -14,16 +12,16 @@ namespace Oracle_Health.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ClinicManagementSystemContext _context;
-    private readonly IConfiguration _configuration;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(ClinicManagementSystemContext context, IConfiguration configuration)
+    public AuthController(ClinicManagementSystemContext context, ITokenService tokenService)
     {
         _context = context;
-        _configuration = configuration;
+        _tokenService = tokenService;
     }
-
+    
     [HttpPost("token")]
-    public async Task<ActionResult<TokenResponse>> CreateToken(TokenRequest request)
+    public async Task<ActionResult<LoginResponse>> CreateToken(LoginRequest request)
     {
         var normalizedEmail = request.Email.Trim().ToLower();
         var user = await _context.Users
@@ -36,35 +34,13 @@ public class AuthController : ControllerBase
         }
 
         var role = UserRole.ToClaimValue(user.Role);
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, role)
-        };
-
-        var secret = _configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is missing.");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiresAt = DateTime.UtcNow.AddHours(8);
+        var token = _tokenService.CreateToken(user, role);
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expiresAt,
-            signingCredentials: credentials);
-
-        return new TokenResponse(
-            new JwtSecurityTokenHandler().WriteToken(token),
+        return Ok(new LoginResponse(
+            token,
             expiresAt,
             role,
-            $"{user.FirstName} {user.LastName}");
+            $"{user.FirstName} {user.LastName}"));
     }
 }
-
-public record TokenRequest(string Email, string Password);
-
-public record TokenResponse(string AccessToken, DateTime ExpiresAtUtc, string Role, string FullName);

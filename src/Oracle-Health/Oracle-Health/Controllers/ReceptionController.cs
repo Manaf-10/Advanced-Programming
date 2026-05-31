@@ -17,7 +17,7 @@ public class ReceptionController : Controller
         _context = context;
     }
 
-    [Authorize(Roles = "Admin,Reception,Patient")]
+    [Authorize(Roles = "Clinic Manager,Receptionist,Patient")]
     [HttpGet("/appointments/book")]
     public async Task<IActionResult> Book()
     {
@@ -31,7 +31,7 @@ public class ReceptionController : Controller
         return View("~/Views/Reception/Book.cshtml", model);
     }
 
-    [Authorize(Roles = "Admin,Reception,Patient")]
+    [Authorize(Roles = "Clinic Manager,Receptionist,Patient")]
     [HttpPost("/appointments/book")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Book(AppointmentBookingViewModel model)
@@ -172,7 +172,7 @@ public class ReceptionController : Controller
         return RedirectToAction("Index", "Appointments");
     }
 
-    [Authorize(Roles = "Admin,Reception,Doctor")]
+    [Authorize(Roles = "Clinic Manager,Receptionist,Doctor")]
     [HttpGet("/appointments/live")]
     public async Task<IActionResult> LiveBoard()
     {

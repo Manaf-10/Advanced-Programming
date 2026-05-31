@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Oracle_Health.Api.Dtos;
 using Oracle_Health.Models;
 
 namespace Oracle_Health.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Clinic Manager")]
 [Route("api/reports")]
 public class ReportsController : ControllerBase
 {
@@ -89,25 +90,3 @@ public class ReportsController : ControllerBase
             .ToList();
     }
 }
-
-public record ClinicSummaryReport(
-    int TotalAppointments,
-    int UpcomingAppointments,
-    int CompletedThisMonth,
-    int ActiveDoctors,
-    int RegisteredPatients);
-
-public record DoctorWorkloadReportItem(
-    long DoctorId,
-    string DoctorName,
-    int TotalAppointments,
-    int CompletedAppointments,
-    int CancelledOrMissedAppointments);
-
-public record CancellationReport(
-    int TotalAppointments,
-    int CancelledAppointments,
-    int MissedAppointments,
-    decimal CancelledOrMissedRate);
-
-public record AppointmentStatusReportItem(string Status, int Count);

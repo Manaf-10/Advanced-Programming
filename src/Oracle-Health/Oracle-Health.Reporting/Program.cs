@@ -1,10 +1,13 @@
+using Oracle_Health.Reporting.Services;
+
 LoadDotEnv();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient("OracleHealthApi", client =>
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IClinicApiService, ClinicApiService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"] ?? "http://localhost:5050");
 });

@@ -1,7 +1,6 @@
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
-using Oracle_Health.Reporting.Models;
+using Oracle_Health.Reporting.Models.ViewModels;
+using Oracle_Health.Reporting.Services;
 
 namespace Oracle_Health.Reporting.Controllers;
 
@@ -11,11 +10,11 @@ public class ReportsController : Controller
     private const string AccessTokenSessionKey = "ManagerAccessToken";
     private const string ManagerNameSessionKey = "ManagerName";
 
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IClinicApiService _apiService;
 
-    public ReportsController(IHttpClientFactory httpClientFactory)
+    public ReportsController(IClinicApiService apiService)
     {
-        _httpClientFactory = httpClientFactory;
+        _apiService = apiService;
     }
 
     [HttpGet("")]
@@ -26,15 +25,7 @@ public class ReportsController : Controller
             return RedirectToAction(nameof(Login));
         }
 
-        var client = CreateAuthorizedClient();
-        var model = new ReportsDashboardViewModel
-        {
-            ManagerName = HttpContext.Session.GetString(ManagerNameSessionKey) ?? "Clinic Manager",
-            Summary = await client.GetFromJsonAsync<ClinicSummaryReport>("api/reports/summary"),
-            DoctorWorkload = await client.GetFromJsonAsync<IReadOnlyList<DoctorWorkloadReportItem>>("api/reports/doctor-workload") ?? [],
-            Cancellations = await client.GetFromJsonAsync<CancellationReport>("api/reports/cancellations"),
-            AppointmentStatuses = await client.GetFromJsonAsync<IReadOnlyList<AppointmentStatusReportItem>>("api/reports/appointment-status") ?? []
-        };
+        var model = await _apiService.GetDashboardDataAsync();
 
         return View(model);
     }
@@ -65,29 +56,20 @@ public class ReportsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        return View(new ManagerLoginViewModel());
+        return View(new LoginViewModel());
     }
 
     [HttpPost("login")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(ManagerLoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var client = _httpClientFactory.CreateClient("OracleHealthApi");
-        var response = await client.PostAsJsonAsync("api/auth/token", new TokenRequest(model.Email, model.Password));
-
-        if (!response.IsSuccessStatusCode)
-        {
-            ModelState.AddModelError(string.Empty, "Invalid manager email or password.");
-            return View(model);
-        }
-
-        var token = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        if (token is null || token.Role != "Admin")
+        var token = await _apiService.LoginAsync(model.Email, model.Password);
+        if (token is null || token.Role != "Clinic Manager")
         {
             ModelState.AddModelError(string.Empty, "Only Clinic Manager accounts can access reporting.");
             return View(model);
@@ -112,11 +94,4 @@ public class ReportsController : Controller
         return !string.IsNullOrWhiteSpace(HttpContext.Session.GetString(AccessTokenSessionKey));
     }
 
-    private HttpClient CreateAuthorizedClient()
-    {
-        var client = _httpClientFactory.CreateClient("OracleHealthApi");
-        var token = HttpContext.Session.GetString(AccessTokenSessionKey);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        return client;
-    }
 }

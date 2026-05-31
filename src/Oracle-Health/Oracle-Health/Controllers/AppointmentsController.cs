@@ -32,7 +32,7 @@ public class AppointmentsController : Controller
             .Include(appointment => appointment.Doctor)
                 .ThenInclude(doctor => doctor.User);
 
-        if (!User.IsInRole("Admin") && !User.IsInRole("Reception"))
+        if (!User.IsInRole("Clinic Manager") && !User.IsInRole("Receptionist"))
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!long.TryParse(userIdClaim, out var userId))
@@ -242,14 +242,14 @@ public class AppointmentsController : Controller
 
     private bool CanCurrentUserSetStatus(Appointment appointment, int nextStatus)
     {
-        if (User.IsInRole("Admin"))
+        if (User.IsInRole("Clinic Manager"))
         {
             return nextStatus is AppointmentStatus.Confirmed
                 or AppointmentStatus.Cancelled
                 or AppointmentStatus.Missed;
         }
 
-        if (User.IsInRole("Reception"))
+        if (User.IsInRole("Receptionist"))
         {
             return nextStatus is AppointmentStatus.Confirmed
                 or AppointmentStatus.CheckedIn
@@ -279,7 +279,7 @@ public class AppointmentsController : Controller
 
     private bool CanCurrentUserViewAppointment(Appointment appointment)
     {
-        if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+        if (User.IsInRole("Clinic Manager") || User.IsInRole("Receptionist"))
         {
             return true;
         }

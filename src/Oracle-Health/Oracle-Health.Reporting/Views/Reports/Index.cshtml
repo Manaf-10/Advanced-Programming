@@ -1,4 +1,4 @@
-@model Oracle_Health.Reporting.Models.ReportsDashboardViewModel
+@model Oracle_Health.Reporting.Models.ViewModels.ReportsDashboardViewModel
 
 @{
     ViewData["Title"] = "Manager Reports";
@@ -38,9 +38,33 @@
     </article>
 </section>
 
+<section class="chart-grid">
+    <article class="report-card chart-card chart-card-wide">
+        <h2>Doctor workload</h2>
+        <div class="chart-frame chart-frame-wide">
+            <canvas id="workloadChart"></canvas>
+        </div>
+    </article>
+
+    <article class="report-card chart-card">
+        <h2>Status breakdown</h2>
+        <div class="chart-frame">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </article>
+
+    <article class="report-card chart-card">
+        <h2>Cancellation rate</h2>
+        <div class="chart-frame chart-frame-gauge">
+            <canvas id="cancellationGauge"></canvas>
+        </div>
+        <div class="gauge-value">@Model.Cancellations?.CancelledOrMissedRate%</div>
+    </article>
+</section>
+
 <section class="report-two-column">
     <article class="report-card">
-        <h2>Doctor workload</h2>
+        <h2>Doctor workload details</h2>
         <table>
             <thead>
                 <tr>
@@ -81,3 +105,109 @@
         </div>
     </article>
 </section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const doctorNames = @Json.Serialize(Model.DoctorWorkload.Select(item => item.DoctorName));
+        const completedAppointments = @Json.Serialize(Model.DoctorWorkload.Select(item => item.CompletedAppointments));
+        const totalAppointments = @Json.Serialize(Model.DoctorWorkload.Select(item => item.TotalAppointments));
+
+        const statusLabels = @Json.Serialize(Model.AppointmentStatuses.Select(item => item.Status));
+        const statusCounts = @Json.Serialize(Model.AppointmentStatuses.Select(item => item.Count));
+        const statusColors = statusLabels.map((label) => {
+            const normalized = label.toLowerCase();
+
+            if (normalized.includes('completed')) return '#2e7d32';
+            if (normalized.includes('cancelled') || normalized.includes('missed')) return '#c62828';
+            if (normalized.includes('requested')) return '#f9a825';
+            if (normalized.includes('confirmed') || normalized.includes('checked')) return '#1565c0';
+
+            return '#6d6258';
+        });
+
+        const cancellationRate = Number(@Json.Serialize(Model.Cancellations?.CancelledOrMissedRate ?? 0));
+        const cancellationRemainder = Math.max(0, 100 - cancellationRate);
+        const gaugeColor = cancellationRate >= 25 ? '#c62828' : cancellationRate >= 10 ? '#f9a825' : '#2e7d32';
+
+        new Chart(document.getElementById('workloadChart'), {
+            type: 'bar',
+            data: {
+                labels: doctorNames,
+                datasets: [
+                    {
+                        label: 'Completed',
+                        data: completedAppointments,
+                        backgroundColor: '#2e7d32',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Total',
+                        data: totalAppointments,
+                        backgroundColor: '#1565c0',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusCounts,
+                    backgroundColor: statusColors,
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('cancellationGauge'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Cancelled or missed', 'Remaining'],
+                datasets: [{
+                    data: [cancellationRate, cancellationRemainder],
+                    backgroundColor: [gaugeColor, '#e7e1da'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                rotation: -90,
+                circumference: 180,
+                cutout: '72%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.label}: ${context.parsed}%`
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
