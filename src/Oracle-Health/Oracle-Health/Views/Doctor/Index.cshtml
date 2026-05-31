@@ -54,6 +54,11 @@
                             }
                         }
                     </div>
+
+                    @if (User.IsInRole("Clinic Manager"))
+                    {
+                        <a class="nav-text-link" href="/doctors/@doctor.Id">Manage doctor</a>
+                    }
                 </article>
             }
         </div>

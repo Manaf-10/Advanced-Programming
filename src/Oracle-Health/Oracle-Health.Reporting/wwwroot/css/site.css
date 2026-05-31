@@ -75,6 +75,43 @@ body {
   gap: 24px;
 }
 
+.chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr) minmax(220px, 0.8fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  min-width: 0;
+}
+
+.chart-card h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.chart-frame {
+  position: relative;
+  height: 280px;
+}
+
+.chart-frame-wide {
+  height: 340px;
+}
+
+.chart-frame-gauge {
+  height: 190px;
+}
+
+.gauge-value {
+  color: #241f1a;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
 table {
   width: 100%;
 }
@@ -123,7 +160,8 @@ td {
 @media (max-width: 800px) {
   .report-header,
   .report-auth,
-  .report-two-column {
+  .report-two-column,
+  .chart-grid {
     display: block;
   }
 

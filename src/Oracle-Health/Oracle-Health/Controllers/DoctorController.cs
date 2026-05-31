@@ -59,6 +59,125 @@ public class DoctorController : Controller
         return View(new DoctorIndexViewModel { Doctors = doctors });
     }
 
+    [Authorize(Roles = "Clinic Manager")]
+    [HttpGet("/doctors/{id:long}")]
+    public async Task<IActionResult> Details(long id)
+    {
+        var model = await BuildManagerDoctorDetailsViewModel(id);
+        if (model is null)
+        {
+            return NotFound();
+        }
+
+        return View("~/Views/Doctor/Details.cshtml", model);
+    }
+
+    [Authorize(Roles = "Clinic Manager")]
+    [HttpPut("/doctors/{id:long}")]
+    [HttpPost("/doctors/{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(long id, DoctorProfileEditViewModel model)
+    {
+        if (id != model.DoctorId)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "Check the doctor profile details and try again.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var doctor = await _context.Doctors
+            .Include(item => item.User)
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        if (doctor is null)
+        {
+            return NotFound();
+        }
+
+        var normalizedEmail = model.Email.Trim().ToLower();
+        var emailExists = await _context.Users.AnyAsync(item =>
+            item.Id != doctor.UserId && item.Email.ToLower() == normalizedEmail);
+
+        if (emailExists)
+        {
+            TempData["ErrorMessage"] = "Another user already uses that email address.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        doctor.User.FirstName = model.FirstName.Trim();
+        doctor.User.LastName = model.LastName.Trim();
+        doctor.User.Email = model.Email.Trim();
+
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Doctor profile updated.";
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [Authorize(Roles = "Clinic Manager")]
+    [HttpPost("/doctors/{id:long}/availability")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveAvailability(long id, DoctorAvailabilityEditViewModel model)
+    {
+        if (id != model.DoctorId)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid || !model.Date.HasValue || !model.StartTime.HasValue || !model.EndTime.HasValue)
+        {
+            TempData["ErrorMessage"] = "Check the availability date and time.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var startTime = model.Date.Value.Date.Add(model.StartTime.Value);
+        var endTime = model.Date.Value.Date.Add(model.EndTime.Value);
+
+        if (endTime <= startTime)
+        {
+            TempData["ErrorMessage"] = "Availability end time must be after start time.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var doctorExists = await _context.Doctors.AnyAsync(item => item.Id == id);
+        if (!doctorExists)
+        {
+            return NotFound();
+        }
+
+        Schedule schedule;
+        if (model.ScheduleId.HasValue)
+        {
+            schedule = await _context.Schedules
+                .FirstOrDefaultAsync(item => item.Id == model.ScheduleId.Value && item.DoctorId == id)
+                ?? new Schedule { DoctorId = id };
+
+            if (schedule.Id == 0)
+            {
+                _context.Schedules.Add(schedule);
+            }
+        }
+        else
+        {
+            schedule = new Schedule { DoctorId = id };
+            _context.Schedules.Add(schedule);
+        }
+
+        schedule.DayOfWeek = startTime.DayOfWeek.ToString();
+        schedule.StartTime = startTime;
+        schedule.EndTime = endTime;
+        schedule.IsOnLeave = model.IsOnLeave;
+
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Doctor availability saved.";
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
     /**
      * The MyAppointments action retrieves the currently logged-in doctor's appointments from the database. 
      * It first checks if the user is authenticated and has the "Doctor" role. Then, it finds the doctor 
@@ -211,5 +330,113 @@ public class DoctorController : Controller
     {
         var daysSinceSunday = (int)date.DayOfWeek;
         return date.AddDays(-daysSinceSunday).Date;
+    }
+
+    private async Task<ManagerDoctorDetailsViewModel?> BuildManagerDoctorDetailsViewModel(long doctorId)
+    {
+        var doctor = await _context.Doctors
+            .AsNoTracking()
+            .Include(item => item.User)
+            .Include(item => item.Schedules)
+            .Include(item => item.Appointments)
+                .ThenInclude(appointment => appointment.Patient)
+                .ThenInclude(patient => patient.User)
+            .FirstOrDefaultAsync(item => item.Id == doctorId);
+
+        if (doctor is null)
+        {
+            return null;
+        }
+
+        var doctors = await _context.Doctors
+            .AsNoTracking()
+            .Include(item => item.User)
+            .OrderBy(item => item.User.FirstName)
+            .ThenBy(item => item.User.LastName)
+            .Select(item => new ManagerSelectOptionViewModel
+            {
+                Id = item.Id,
+                Label = "Dr. " + item.User.FirstName + " " + item.User.LastName
+            })
+            .ToListAsync();
+
+        var patients = await _context.Patients
+            .AsNoTracking()
+            .Include(item => item.User)
+            .OrderBy(item => item.User.FirstName)
+            .ThenBy(item => item.User.LastName)
+            .Select(item => new ManagerSelectOptionViewModel
+            {
+                Id = item.Id,
+                Label = item.User.FirstName + " " + item.User.LastName + " | Ref: " + item.PatientId
+            })
+            .ToListAsync();
+
+        var statuses = new[]
+        {
+            AppointmentStatus.Requested,
+            AppointmentStatus.Confirmed,
+            AppointmentStatus.CheckedIn,
+            AppointmentStatus.InProgress,
+            AppointmentStatus.Completed,
+            AppointmentStatus.Cancelled,
+            AppointmentStatus.Missed
+        }
+        .Select(status => new ManagerSelectOptionViewModel
+        {
+            Id = status,
+            Label = AppointmentStatus.ToDisplayName(status)
+        })
+        .ToList();
+
+        return new ManagerDoctorDetailsViewModel
+        {
+            DoctorId = doctor.Id,
+            FullName = "Dr. " + doctor.User.FirstName + " " + doctor.User.LastName,
+            Profile = new DoctorProfileEditViewModel
+            {
+                DoctorId = doctor.Id,
+                FirstName = doctor.User.FirstName,
+                LastName = doctor.User.LastName,
+                Email = doctor.User.Email
+            },
+            NewAvailability = new DoctorAvailabilityEditViewModel
+            {
+                DoctorId = doctor.Id,
+                Date = DateTime.Today,
+                StartTime = new TimeSpan(9, 0, 0),
+                EndTime = new TimeSpan(17, 0, 0)
+            },
+            Availability = doctor.Schedules
+                .OrderBy(item => item.StartTime)
+                .Select(item => new DoctorAvailabilityEditViewModel
+                {
+                    ScheduleId = item.Id,
+                    DoctorId = doctor.Id,
+                    Date = item.StartTime.Date,
+                    StartTime = item.StartTime.TimeOfDay,
+                    EndTime = item.EndTime.TimeOfDay,
+                    IsOnLeave = item.IsOnLeave == true
+                })
+                .ToList(),
+            Appointments = doctor.Appointments
+                .OrderBy(item => item.Date)
+                .Select(item => new ManagerAppointmentEditViewModel
+                {
+                    AppointmentId = item.Id,
+                    PatientId = item.PatientId,
+                    DoctorId = item.DoctorId,
+                    AppointmentDate = item.Date.Date,
+                    AppointmentTime = item.Date.TimeOfDay,
+                    DurationMinutes = item.DurationMinutes,
+                    Status = item.Status,
+                    PatientName = item.Patient.User.FirstName + " " + item.Patient.User.LastName,
+                    DoctorName = doctor.User.FirstName + " " + doctor.User.LastName
+                })
+                .ToList(),
+            Doctors = doctors,
+            Patients = patients,
+            Statuses = statuses
+        };
     }
 }

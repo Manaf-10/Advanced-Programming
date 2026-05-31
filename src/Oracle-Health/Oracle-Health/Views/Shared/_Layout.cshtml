@@ -106,8 +106,8 @@
                 var isAuthenticated = layoutIsAuthenticated;
                 var isPatient = User.IsInRole("Patient");
                 var isDoctor = User.IsInRole("Doctor");
-                var isReceptionist = User.IsInRole("Reception");
-                var isClinicManager = User.IsInRole("Admin");
+                var isReceptionist = User.IsInRole("Receptionist");
+                var isClinicManager = User.IsInRole("Clinic Manager");
             }
 
             <a asp-controller="Home" asp-action="Index" class="nav-link-item">

@@ -32,7 +32,7 @@ public class AppointmentsController : Controller
             .Include(appointment => appointment.Doctor)
                 .ThenInclude(doctor => doctor.User);
 
-        if (!User.IsInRole("Admin") && !User.IsInRole("Reception"))
+        if (!User.IsInRole("Clinic Manager") && !User.IsInRole("Receptionist"))
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!long.TryParse(userIdClaim, out var userId))
@@ -147,6 +147,55 @@ public class AppointmentsController : Controller
         return RedirectToAction("Index");
     }
 
+    [Authorize(Roles = "Clinic Manager")]
+    [HttpPut("/appointments/{id:long}")]
+    [HttpPost("/appointments/{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateAppointment(long id, ManagerAppointmentEditViewModel model)
+    {
+        if (id != model.AppointmentId)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid || !model.AppointmentDate.HasValue || !model.AppointmentTime.HasValue)
+        {
+            TempData["ErrorMessage"] = "Check the appointment details and try again.";
+            return RedirectToAction("Details", "Doctor", new { id = model.DoctorId });
+        }
+
+        var appointment = await _context.Appointments
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        if (appointment is null)
+        {
+            return NotFound();
+        }
+
+        var patientExists = await _context.Patients.AnyAsync(item => item.Id == model.PatientId);
+        var doctorExists = await _context.Doctors.AnyAsync(item => item.Id == model.DoctorId);
+
+        if (!patientExists || !doctorExists)
+        {
+            TempData["ErrorMessage"] = "Select a valid patient and doctor.";
+            return RedirectToAction("Details", "Doctor", new { id = appointment.DoctorId });
+        }
+
+        var oldDoctorId = appointment.DoctorId;
+
+        appointment.PatientId = model.PatientId;
+        appointment.DoctorId = model.DoctorId;
+        appointment.Date = model.AppointmentDate.Value.Date.Add(model.AppointmentTime.Value);
+        appointment.DurationMinutes = model.DurationMinutes;
+        appointment.Status = model.Status;
+
+        await _context.SaveChangesAsync();
+        await BroadcastStatusChange(appointment);
+
+        TempData["SuccessMessage"] = "Appointment updated.";
+        return RedirectToAction("Details", "Doctor", new { id = model.DoctorId == 0 ? oldDoctorId : model.DoctorId });
+    }
+
     [HttpPost]
     [Authorize(Roles = "Doctor")]
     [ValidateAntiForgeryToken]
@@ -242,14 +291,14 @@ public class AppointmentsController : Controller
 
     private bool CanCurrentUserSetStatus(Appointment appointment, int nextStatus)
     {
-        if (User.IsInRole("Admin"))
+        if (User.IsInRole("Clinic Manager"))
         {
             return nextStatus is AppointmentStatus.Confirmed
                 or AppointmentStatus.Cancelled
                 or AppointmentStatus.Missed;
         }
 
-        if (User.IsInRole("Reception"))
+        if (User.IsInRole("Receptionist"))
         {
             return nextStatus is AppointmentStatus.Confirmed
                 or AppointmentStatus.CheckedIn
@@ -279,7 +328,7 @@ public class AppointmentsController : Controller
 
     private bool CanCurrentUserViewAppointment(Appointment appointment)
     {
-        if (User.IsInRole("Admin") || User.IsInRole("Reception"))
+        if (User.IsInRole("Clinic Manager") || User.IsInRole("Receptionist"))
         {
             return true;
         }

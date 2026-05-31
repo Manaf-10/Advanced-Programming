@@ -560,6 +560,126 @@ form {
   margin-bottom: 8px;
 }
 
+.manager-detail-page {
+  width: min(1180px, calc(100vw - 240px));
+  color: var(--secondairy-color);
+  padding-bottom: 32px;
+}
+
+.manager-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 1.5% 8px;
+}
+
+.manager-page-header p {
+  color: #4d6770;
+  margin-left: 1.5%;
+}
+
+.manager-panel {
+  margin: 16px 1.5%;
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.manager-panel h2 {
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+}
+
+.manager-form {
+  height: auto;
+}
+
+.manager-form-grid,
+.manager-inline-form,
+.manager-appointment-form {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-form-grid {
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  align-items: end;
+}
+
+.manager-inline-form {
+  grid-template-columns: minmax(150px, 1fr) 120px 120px 110px auto;
+  align-items: end;
+}
+
+.manager-appointment-form {
+  grid-template-columns: minmax(180px, 1.2fr) minmax(180px, 1.2fr) minmax(135px, 0.8fr) minmax(110px, 0.6fr) minmax(110px, 0.6fr) minmax(130px, 0.8fr) auto;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #ffffff33;
+}
+
+.manager-appointment-title {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.manager-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-form label,
+.manager-inline-form label,
+.manager-appointment-form label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.manager-form span,
+.manager-inline-form span,
+.manager-appointment-form span {
+  color: #4d6770;
+  font-size: 0.86rem;
+}
+
+.manager-form input,
+.manager-inline-form input,
+.manager-appointment-form input,
+.manager-appointment-form select {
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  background-color: #ffffff66;
+  color: var(--secondairy-color);
+  padding: 8px 10px;
+}
+
+.manager-check {
+  display: inline-flex !important;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+}
+
+.manager-check input {
+  min-height: auto;
+}
+
+.manager-button {
+  margin-top: 14px;
+  width: auto;
+  min-width: 140px;
+}
+
 .availability-page {
   width: min(100%, 1120px);
 }
@@ -1095,7 +1215,10 @@ form {
 
   .auth-grid,
   .home-actions,
-  .profile-grid {
+  .profile-grid,
+  .manager-form-grid,
+  .manager-inline-form,
+  .manager-appointment-form {
     grid-template-columns: 1fr;
   }
 

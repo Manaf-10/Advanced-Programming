@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Oracle_Health.Api.Services;
 using Oracle_Health.Data;
 using Oracle_Health.Models;
 
@@ -35,6 +36,7 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

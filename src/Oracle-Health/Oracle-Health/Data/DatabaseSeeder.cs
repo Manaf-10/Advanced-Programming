@@ -27,8 +27,8 @@ public static class DatabaseSeeder
 
         context.Specializations.AddRange(cardiology, pediatrics, dermatology, familyMedicine);
 
-        var managerUser = CreateUser("Mariam", "Al Haddad", "manager@oraclehealth.test", UserRole.Admin);
-        var receptionistUser = CreateUser("Noor", "Khalil", "reception@oraclehealth.test", UserRole.Reception);
+        var managerUser = CreateUser("Mariam", "Al Haddad", "manager@oraclehealth.test", UserRole.ClinicManager);
+        var receptionistUser = CreateUser("Noor", "Khalil", "reception@oraclehealth.test", UserRole.Receptionist);
         var doctorOneUser = CreateUser("Ahmed", "Naser", "ahmed.naser@oraclehealth.test", UserRole.Doctor);
         var doctorTwoUser = CreateUser("Sara", "Mansoor", "sara.mansoor@oraclehealth.test", UserRole.Doctor);
         var patientOneUser = CreateUser("Ali", "Hassan", "ali.hassan@oraclehealth.test", UserRole.Patient);

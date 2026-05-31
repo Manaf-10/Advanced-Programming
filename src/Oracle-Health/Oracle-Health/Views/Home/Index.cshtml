@@ -4,9 +4,9 @@
     ViewData["Title"] = "Home";
     var reportingBaseUrl = Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055";
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
-    var roleName = User.IsInRole("Admin")
+    var roleName = User.IsInRole("Clinic Manager")
         ? "Clinic Manager"
-        : User.IsInRole("Reception")
+        : User.IsInRole("Receptionist")
             ? "Receptionist"
             : User.IsInRole("Doctor")
                 ? "Doctor"
@@ -29,7 +29,7 @@
     <div class="home-actions">
         @if (isAuthenticated)
         {
-            @if (User.IsInRole("Admin"))
+            @if (User.IsInRole("Clinic Manager"))
             {
                 <a href="@($"{reportingBaseUrl}/reports/statistics")" class="home-action-card">
                     <span>Reports</span>
@@ -40,7 +40,7 @@
                     <strong>Manage doctor profiles, workload, and schedules.</strong>
                 </a>
             }
-            else if (User.IsInRole("Reception"))
+            else if (User.IsInRole("Receptionist"))
             {
                 <a href="/appointments" class="home-action-card">
                     <span>Appointments</span>
