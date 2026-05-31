@@ -106,7 +106,6 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | GET | Layout notification dropdown | Authenticated | Display appointment alerts and system notifications in the shared layout | Finished |
 | POST | `/Notifications/Delete/{id}` | Authenticated | Delete a dismissed notification from the database | Finished |
 | POST | `/Notifications/Clear` | Authenticated | Delete all notifications for the current user | Finished |
-| GET | `/notifications` | Authenticated | Display a standalone notifications page | Not finished |
 
 ### Manager
 

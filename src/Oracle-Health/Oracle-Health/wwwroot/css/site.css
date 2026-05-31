@@ -47,6 +47,11 @@ header {
   height: 94vh;
 }
 
+main {
+  flex: 1;
+  min-width: 0;
+}
+
 nav {
   border-right: 1px solid var(--border-color);
   height: 100%;
@@ -251,14 +256,13 @@ nav a {
 .appointments-container {
   display: flex;
   flex-direction: column;
-  width: 130%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .appointments-container-header {
-  display: flex;
-  flex-direction: row;
   font-weight: 700;
-  width: 130%;
 }
 
 .appointments-cell {
@@ -274,11 +278,19 @@ nav a {
 
 .appointment-grid-row {
   display: grid;
-  grid-template-columns: 1.6fr 1.8fr 1fr 1.6fr;
+  grid-template-columns: minmax(140px, 1.2fr) minmax(190px, 1.6fr) minmax(100px, 0.7fr) minmax(180px, 1.2fr);
   align-items: center;
   gap: 10px;
   background-color: #ffffff33;
   padding: 8px 0.8%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.appointment-grid-row > * {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .visit-records-container {
@@ -385,6 +397,25 @@ nav a {
 .appointment-status-button:hover {
   cursor: pointer;
   background-color: var(--secondairy-color);
+}
+
+.booking-shell {
+  width: 100%;
+  min-width: 0;
+  padding: 18px 1.5% 28px;
+  box-sizing: border-box;
+}
+
+.booking-panel {
+  max-width: 1160px;
+}
+
+.booking-card-body {
+  padding: 32px 40px;
+}
+
+.booking-form {
+  height: auto;
 }
 
 .appointment-row-updated {
@@ -537,18 +568,21 @@ form {
 
 .doctor-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 16px;
   padding: 0 1.5%;
-  width: 96vw;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .doctor-card {
+  min-width: 0;
   background-color: var(--containers-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--secondairy-color);
   padding: 18px;
+  overflow-wrap: anywhere;
 }
 
 .doctor-card h2 {
@@ -1152,6 +1186,24 @@ form {
 
   .visit-record-row {
     gap: 6px;
+  }
+
+  .appointment-grid-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 12px 1.5%;
+  }
+
+  .appointments-container-header.appointment-grid-row {
+    display: none;
+  }
+
+  .booking-shell {
+    padding: 12px;
+  }
+
+  .booking-card-body {
+    padding: 22px;
   }
 }
 

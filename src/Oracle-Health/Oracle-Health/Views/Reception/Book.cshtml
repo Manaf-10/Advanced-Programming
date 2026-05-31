@@ -4,12 +4,12 @@
     ViewData["Title"] = "Book Appointment";
 }
 
-<section class="container py-4">
+<section class="booking-shell">
     <div class="row justify-content-center">
-        <div class="col-xl-10">
+        <div class="col-xl-10 booking-panel">
             <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 p-lg-5">
-                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                <div class="card-body booking-card-body">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                         <div>
                             <p class="text-uppercase text-secondary fw-semibold mb-2">Reception Workspace</p>
                             <h1 class="h2 mb-2">Book Appointment</h1>
@@ -24,7 +24,7 @@
                         </div>
                     </div>
 
-                    <form method="post" class="row g-4">
+                    <form method="post" class="row g-3 booking-form">
                         @Html.AntiForgeryToken()
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
