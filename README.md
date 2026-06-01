@@ -73,8 +73,8 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | POST | `/api/public/appointments/lookup` | Public API | Lookup upcoming appointments and recent visits by CPR and patient reference | Finished |
 | PUT | `/api/appointments/{id}` | Clinic Manager API | Update appointment details with schedule and overlap conflict checks | Finished |
 | HUB | `/hubs/appointments` | Staff | SignalR hub used for live appointment status updates | Finished |
-| GET | `/appointments/book` | Staff | Display appointment booking form | Not finished |
-| POST | `/appointments/book` | Staff | Create a new appointment | Not finished |
+| GET | `/appointments/book` | Staff | Display appointment booking form | Finished |
+| POST | `/appointments/book` | Staff | Create a new appointment | Finished |
 
 ### Visit History
 
@@ -86,8 +86,6 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | POST | `/Appointments/UpdateDetails` | Doctor | Create or update a visit record when completing an appointment | Finished |
 | POST | `/Appointments/UpdateDetails` | Doctor | Save prescription text linked to a completed visit | Finished |
 | GET | `/patients/prescriptions` | Patient | Display the current patient's prescriptions | Finished |
-| GET | `/patients/{id}/history` | Staff | Display any patient's full visit history | Not finished |
-| GET | `/prescriptions/{id}` | Staff and the Patient | Display a single prescription for an authorized user | Not finished |
 | GET | `/api/prescriptions/{id}` | Authorized API | Return prescription details for authorized staff, patient, or prescribing doctor | Finished |
 
 ### Doctor
@@ -99,8 +97,6 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | GET | `/Doctor` | Staff | List all doctors with schedules and upcoming appointment counts | Finished |
 | GET | `/doctors/me/availability` | Doctor | Display the logged-in doctor's weekly availability | Finished |
 | GET | `/doctors/me/appointments` | Doctor | Display appointments assigned to the logged-in doctor | Finished |
-| GET | `/doctors/{id}/availability` | Staff | Display available time slots for a selected doctor | Not finished |
-| GET | `/doctors/{id}/appointments` | Staff | Display appointments assigned to a selected doctor | Not finished |
 
 ### Notifications
 

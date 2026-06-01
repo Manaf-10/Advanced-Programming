@@ -17,6 +17,7 @@ public static class DatabaseSeeder
 
         if (await context.Users.AnyAsync(user => user.Email == "manager@oraclehealth.test"))
         {
+            await RemoveRedundantSeedAppointmentsAsync(context);
             return;
         }
 
@@ -61,64 +62,41 @@ public static class DatabaseSeeder
 
         var today = DateTime.Today;
 
-        var completedAppointment = new Appointment
-        {
-            Patient = patientOne,
-            Doctor = doctorOne,
-            Date = today.AddDays(-7).AddHours(10),
-            DurationMinutes = 30,
-            Status = AppointmentStatus.Completed
-        };
-
-        var confirmedAppointment = new Appointment
-        {
-            Patient = patientTwo,
-            Doctor = doctorOne,
-            Date = today.AddDays(1).AddHours(9),
-            DurationMinutes = 30,
-            Status = AppointmentStatus.Confirmed
-        };
-
-        var requestedAppointment = new Appointment
-        {
-            Patient = patientThree,
-            Doctor = doctorTwo,
-            Date = today.AddDays(2).AddHours(13),
-            DurationMinutes = 45,
-            Status = AppointmentStatus.Requested
-        };
-
-        var checkedInAppointment = new Appointment
-        {
-            Patient = patientOne,
-            Doctor = doctorTwo,
-            Date = today.AddHours(11),
-            DurationMinutes = 30,
-            Status = AppointmentStatus.CheckedIn
-        };
+        var completedAppointment = CreateAppointment(patientOne, doctorOne, today.AddDays(-7).AddHours(10), 30, AppointmentStatus.Completed);
+        var confirmedAppointment = CreateAppointment(patientTwo, doctorOne, today.AddDays(1).AddHours(9), 30, AppointmentStatus.Confirmed);
+        var requestedAppointment = CreateAppointment(patientThree, doctorTwo, today.AddDays(2).AddHours(13), 45, AppointmentStatus.Requested);
+        var checkedInAppointment = CreateAppointment(patientOne, doctorTwo, today.AddHours(11), 30, AppointmentStatus.CheckedIn);
+        var inProgressAppointment = CreateAppointment(patientThree, doctorOne, today.AddHours(10), 30, AppointmentStatus.InProgress);
+        var cancelledAppointment = CreateAppointment(patientThree, doctorOne, today.AddDays(-2).AddHours(15), 30, AppointmentStatus.Cancelled);
+        var missedAppointment = CreateAppointment(patientTwo, doctorTwo, today.AddDays(-1).AddHours(10), 30, AppointmentStatus.Missed);
 
         context.Appointments.AddRange(
             completedAppointment,
             confirmedAppointment,
             requestedAppointment,
-            checkedInAppointment);
+            checkedInAppointment,
+            inProgressAppointment,
+            cancelledAppointment,
+            missedAppointment);
 
         context.Schedules.AddRange(
-            CreateSchedule(doctorOne, "Sunday", today.AddDays(1).AddHours(8), today.AddDays(1).AddHours(14), confirmedAppointment),
-            CreateSchedule(doctorOne, "Monday", today.AddDays(2).AddHours(8), today.AddDays(2).AddHours(14)),
-            CreateSchedule(doctorTwo, "Sunday", today.AddHours(10), today.AddHours(16), checkedInAppointment),
-            CreateSchedule(doctorTwo, "Tuesday", today.AddDays(2).AddHours(12), today.AddDays(2).AddHours(18), requestedAppointment),
-            CreateSchedule(doctorTwo, "Thursday", today.AddDays(4).AddHours(9), today.AddDays(4).AddHours(12), isOnLeave: true));
+            CreateSchedule(doctorOne, today.AddDays(1).DayOfWeek.ToString(), today.AddDays(1).AddHours(8), today.AddDays(1).AddHours(14), confirmedAppointment),
+            CreateSchedule(doctorOne, today.AddDays(2).DayOfWeek.ToString(), today.AddDays(2).AddHours(8), today.AddDays(2).AddHours(14)),
+            CreateSchedule(doctorOne, today.DayOfWeek.ToString(), today.AddHours(8), today.AddHours(13), inProgressAppointment),
+            CreateSchedule(doctorOne, today.AddDays(-7).DayOfWeek.ToString(), today.AddDays(-7).AddHours(8), today.AddDays(-7).AddHours(14), completedAppointment),
+            CreateSchedule(doctorOne, today.AddDays(-2).DayOfWeek.ToString(), today.AddDays(-2).AddHours(9), today.AddDays(-2).AddHours(16), cancelledAppointment),
+            CreateSchedule(doctorTwo, today.DayOfWeek.ToString(), today.AddHours(10), today.AddHours(16), checkedInAppointment),
+            CreateSchedule(doctorTwo, today.AddDays(2).DayOfWeek.ToString(), today.AddDays(2).AddHours(12), today.AddDays(2).AddHours(18), requestedAppointment),
+            CreateSchedule(doctorTwo, today.AddDays(-1).DayOfWeek.ToString(), today.AddDays(-1).AddHours(9), today.AddDays(-1).AddHours(15), missedAppointment),
+            CreateSchedule(doctorTwo, today.AddDays(4).DayOfWeek.ToString(), today.AddDays(4).AddHours(9), today.AddDays(4).AddHours(12), isOnLeave: true));
 
-        context.Visits.Add(new Visit
-        {
-            Patient = patientOne,
-            Doctor = doctorOne,
-            Appointment = completedAppointment,
-            Notes = "Diagnosis: Mild hypertension\nNotes: Patient advised to reduce sodium intake and monitor blood pressure.",
-            Prescription = "Amlodipine 5mg once daily for 30 days",
-            CreatedAt = today.AddDays(-7).AddHours(10.5)
-        });
+        context.Visits.Add(CreateVisit(
+            patientOne,
+            doctorOne,
+            completedAppointment,
+            "Mild hypertension",
+            "Patient advised to reduce sodium intake and monitor blood pressure.",
+            "Amlodipine 5mg once daily for 30 days"));
 
         context.Notifications.AddRange(
             new Notification
@@ -138,7 +116,77 @@ public static class DatabaseSeeder
                 User = receptionistUser,
                 Message = "New requested appointment from Omar Yousif needs confirmation.",
                 CreatedAt = DateTime.Now.AddMinutes(-10)
+            },
+            new Notification
+            {
+                User = doctorOneUser,
+                Message = "Omar Yousif's appointment is currently in progress.",
+                CreatedAt = DateTime.Now.AddMinutes(-5)
             });
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task RemoveRedundantSeedAppointmentsAsync(ClinicManagementSystemContext context)
+    {
+        var today = DateTime.Today;
+        var seedAppointmentCandidates = await context.Appointments
+            .Include(appointment => appointment.Patient)
+                .ThenInclude(patient => patient.User)
+            .Include(appointment => appointment.Doctor)
+                .ThenInclude(doctor => doctor.User)
+            .Include(appointment => appointment.Schedules)
+            .Include(appointment => appointment.Visit)
+            .Where(appointment => appointment.Date >= today.AddDays(-3) && appointment.Date < today.AddDays(7))
+            .ToListAsync();
+
+        var redundantSeedAppointments = seedAppointmentCandidates
+            .Where(appointment =>
+                IsSeedAppointment(
+                    appointment,
+                    "fatima.saleh@oraclehealth.test",
+                    "sara.mansoor@oraclehealth.test",
+                    today.AddDays(-3).AddHours(14),
+                    30,
+                    AppointmentStatus.Completed)
+                || IsSeedAppointment(
+                    appointment,
+                    "ali.hassan@oraclehealth.test",
+                    "ahmed.naser@oraclehealth.test",
+                    today.AddDays(1).AddHours(11),
+                    45,
+                    AppointmentStatus.Confirmed)
+                || IsSeedAppointment(
+                    appointment,
+                    "ali.hassan@oraclehealth.test",
+                    "sara.mansoor@oraclehealth.test",
+                    today.AddDays(3).AddHours(9),
+                    30,
+                    AppointmentStatus.Requested)
+                || IsSeedAppointment(
+                    appointment,
+                    "omar.yousif@oraclehealth.test",
+                    "sara.mansoor@oraclehealth.test",
+                    today.AddDays(5).AddHours(15),
+                    30,
+                    AppointmentStatus.Confirmed)
+                || IsSeedAppointment(
+                    appointment,
+                    "ali.hassan@oraclehealth.test",
+                    "sara.mansoor@oraclehealth.test",
+                    today.AddDays(6).AddHours(10),
+                    30,
+                    AppointmentStatus.Cancelled))
+            .ToList();
+
+        if (redundantSeedAppointments.Count == 0)
+        {
+            return;
+        }
+
+        context.Schedules.RemoveRange(redundantSeedAppointments.SelectMany(appointment => appointment.Schedules));
+        context.Visits.RemoveRange(redundantSeedAppointments.Select(appointment => appointment.Visit).OfType<Visit>());
+        context.Appointments.RemoveRange(redundantSeedAppointments);
 
         await context.SaveChangesAsync();
     }
@@ -152,6 +200,52 @@ public static class DatabaseSeeder
             Email = email,
             Password = PasswordService.Hash(SeedPassword),
             Role = role
+        };
+    }
+
+    private static Appointment CreateAppointment(Patient patient, Doctor doctor, DateTime date, int durationMinutes, int status)
+    {
+        return new Appointment
+        {
+            Patient = patient,
+            Doctor = doctor,
+            Date = date,
+            DurationMinutes = durationMinutes,
+            Status = status
+        };
+    }
+
+    private static bool IsSeedAppointment(
+        Appointment appointment,
+        string patientEmail,
+        string doctorEmail,
+        DateTime date,
+        int durationMinutes,
+        int status)
+    {
+        return appointment.Patient.User.Email == patientEmail
+            && appointment.Doctor.User.Email == doctorEmail
+            && appointment.Date == date
+            && appointment.DurationMinutes == durationMinutes
+            && appointment.Status == status;
+    }
+
+    private static Visit CreateVisit(
+        Patient patient,
+        Doctor doctor,
+        Appointment appointment,
+        string diagnosis,
+        string notes,
+        string prescription)
+    {
+        return new Visit
+        {
+            Patient = patient,
+            Doctor = doctor,
+            Appointment = appointment,
+            Notes = $"Diagnosis: {diagnosis}\nNotes: {notes}",
+            Prescription = prescription,
+            CreatedAt = appointment.Date.AddMinutes(appointment.DurationMinutes)
         };
     }
 
