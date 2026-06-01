@@ -7,7 +7,7 @@
 [Mohamed Alnooh](https://github.com/alnoohy) | 
 [Manaf Hujairi](https://github.com/Manaf-10) | 
 [Abdulla Alwaraqaa](https://github.com/AbdullahAlwarqaa) | 
-[Mohamed Jaffar](https://github.com/MohamedJaafar0) | [Mahmood Abdulla](https://github.com/Mahm64d)
+[Mohamed Jaffar](https://github.com/MohamedJaafar0)
 
 ## ERD
 
