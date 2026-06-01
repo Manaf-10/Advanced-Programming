@@ -899,6 +899,106 @@ form {
   border-left-color: #ff2617;
 }
 
+.booking-availability-card {
+  color: var(--secondairy-color);
+  background-color: var(--containers-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.booking-availability-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  background-color: #ffffff33;
+}
+
+.booking-availability-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.booking-availability-header p {
+  margin: 0;
+  color: #5d7780;
+  font-size: 0.88rem;
+}
+
+.booking-availability-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.booking-availability-table-wrap {
+  max-height: 310px;
+  overflow-y: auto;
+}
+
+.booking-availability-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.booking-availability-table th,
+.booking-availability-table td {
+  padding: 9px 14px;
+  border-top: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.booking-availability-table th {
+  color: var(--secondairy-color);
+  background-color: #ffffff33;
+  font-size: 0.84rem;
+}
+
+.booking-availability-table th:last-child,
+.booking-availability-table td:last-child {
+  width: 78px;
+  text-align: right;
+}
+
+.booking-slot-status {
+  display: inline-flex;
+  align-items: center;
+  border-left: 4px solid var(--border-color);
+  padding-left: 7px;
+  font-size: 0.84rem;
+}
+
+.booking-slot-status-available {
+  color: #4c825c;
+  border-left-color: #4c825c;
+}
+
+.booking-slot-status-busy {
+  color: #4771d3;
+  border-left-color: #4771d3;
+}
+
+.booking-slot-status-not-working {
+  color: #ff2617;
+  border-left-color: #ff2617;
+}
+
+.booking-slot-select {
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  color: var(--background-color);
+  background-color: var(--clickable-items-color);
+  padding: 4px 10px;
+  font-size: 0.84rem;
+}
+
+.booking-slot-select:hover {
+  cursor: pointer;
+  background-color: var(--secondairy-color);
+}
+
 .patient-search-form {
   display: flex;
   align-items: center;
@@ -1219,6 +1319,10 @@ form {
 
   .availability-day {
     min-height: auto;
+  }
+
+  .booking-availability-header {
+    flex-direction: column;
   }
 
   .visit-records-container {

@@ -27,6 +27,8 @@ public class AppointmentBookingViewModel
 
     public bool CanSelectPatient { get; set; }
 
+    public bool CanSelectDoctor { get; set; } = true;
+
     public List<AppointmentBookingSelectOptionViewModel> Specializations { get; set; } = new();
 
     public List<AppointmentBookingDoctorOptionViewModel> Doctors { get; set; } = new();

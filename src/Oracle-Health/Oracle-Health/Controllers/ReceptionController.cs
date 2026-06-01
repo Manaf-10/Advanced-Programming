@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,21 +17,27 @@ public class ReceptionController : Controller
         _context = context;
     }
 
-    [Authorize(Roles = "Clinic Manager,Receptionist,Patient")]
+    [Authorize(Roles = "Clinic Manager,Receptionist,Patient,Doctor")]
     [HttpGet("/appointments/book")]
     public async Task<IActionResult> Book()
     {
+        var bookingScope = await ResolveBookingScopeAsync();
+        if (!bookingScope.IsValid)
+        {
+            return Forbid();
+        }
+
         var model = await BuildBookingViewModelAsync(new AppointmentBookingViewModel
         {
             AppointmentDate = GetSuggestedBookingDate(),
             AppointmentTime = new TimeSpan(9, 0, 0),
             DurationMinutes = 30
-        });
+        }, bookingScope);
 
         return View("~/Views/Reception/Book.cshtml", model);
     }
 
-    [Authorize(Roles = "Clinic Manager,Receptionist,Patient")]
+    [Authorize(Roles = "Clinic Manager,Receptionist,Patient,Doctor")]
     [HttpPost("/appointments/book")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Book(AppointmentBookingViewModel model)
@@ -45,6 +51,11 @@ public class ReceptionController : Controller
         if (bookingScope.FixedPatientId.HasValue)
         {
             model.SelectedPatientId = bookingScope.FixedPatientId.Value;
+        }
+
+        if (bookingScope.FixedDoctorId.HasValue)
+        {
+            model.SelectedDoctorId = bookingScope.FixedDoctorId.Value;
         }
 
         if (!model.SelectedPatientId.HasValue)
@@ -67,9 +78,16 @@ public class ReceptionController : Controller
             ModelState.AddModelError(nameof(model.AppointmentTime), "Choose an appointment time.");
         }
 
+        if (model.SelectedPatientId.HasValue
+            && bookingScope.AllowedPatientIds is not null
+            && !bookingScope.AllowedPatientIds.Contains(model.SelectedPatientId.Value))
+        {
+            ModelState.AddModelError(nameof(model.SelectedPatientId), "Select one of your patients for the follow-up appointment.");
+        }
+
         if (!ModelState.IsValid)
         {
-            model = await BuildBookingViewModelAsync(model);
+            model = await BuildBookingViewModelAsync(model, bookingScope);
             return View("~/Views/Reception/Book.cshtml", model);
         }
 
@@ -112,19 +130,27 @@ public class ReceptionController : Controller
             }
         }
 
-        if (doctor is not null && !await HasWorkingScheduleAsync(doctor.Id, appointmentStart, appointmentEnd))
+        if (!ModelState.IsValid || doctor is null || patient is null)
+        {
+            model = await BuildBookingViewModelAsync(model, bookingScope);
+            return View("~/Views/Reception/Book.cshtml", model);
+        }
+
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+
+        if (!await HasWorkingScheduleAsync(doctor.Id, appointmentStart, appointmentEnd))
         {
             ModelState.AddModelError(nameof(model.AppointmentTime), "The doctor is not available during the selected time slot.");
         }
 
-        if (doctor is not null && await HasOverlappingAppointmentAsync(doctor.Id, appointmentStart, appointmentEnd))
+        if (await HasOverlappingAppointmentAsync(doctor.Id, appointmentStart, appointmentEnd))
         {
             ModelState.AddModelError(nameof(model.AppointmentTime), "This slot is already booked. Choose another time.");
         }
 
-        if (!ModelState.IsValid || doctor is null || patient is null)
+        if (!ModelState.IsValid)
         {
-            model = await BuildBookingViewModelAsync(model);
+            model = await BuildBookingViewModelAsync(model, bookingScope);
             return View("~/Views/Reception/Book.cshtml", model);
         }
 
@@ -164,12 +190,53 @@ public class ReceptionController : Controller
         });
 
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
 
         TempData["SuccessMessage"] = User.IsInRole("Patient")
             ? "Appointment request submitted successfully."
             : "Appointment booked successfully.";
 
         return RedirectToAction("Index", "Appointments");
+    }
+
+    [Authorize(Roles = "Clinic Manager,Receptionist,Patient,Doctor")]
+    [HttpGet("/appointments/availability")]
+    public async Task<IActionResult> Availability(long? doctorId, DateTime? date, int durationMinutes = 30)
+    {
+        var bookingScope = await ResolveBookingScopeAsync();
+        if (!bookingScope.IsValid)
+        {
+            return Forbid();
+        }
+
+        if (bookingScope.FixedDoctorId.HasValue)
+        {
+            doctorId = bookingScope.FixedDoctorId.Value;
+        }
+
+        if (!doctorId.HasValue || !date.HasValue || durationMinutes is < 15 or > 120)
+        {
+            return BadRequest();
+        }
+
+        var doctorExists = await _context.Doctors
+            .AsNoTracking()
+            .AnyAsync(item => item.Id == doctorId.Value);
+
+        if (!doctorExists)
+        {
+            return NotFound();
+        }
+
+        var slots = await BuildAvailabilitySlotsAsync(doctorId.Value, date.Value.Date, durationMinutes);
+
+        return Json(new
+        {
+            DoctorId = doctorId.Value,
+            Date = date.Value.ToString("yyyy-MM-dd"),
+            DurationMinutes = durationMinutes,
+            Slots = slots
+        });
     }
 
     [Authorize(Roles = "Clinic Manager,Receptionist,Doctor")]
@@ -211,7 +278,10 @@ public class ReceptionController : Controller
     {
         var schedules = await _context.Schedules
             .AsNoTracking()
-            .Where(item => item.DoctorId == doctorId && item.StartTime.Date == appointmentStart.Date)
+            .Where(item =>
+                item.DoctorId == doctorId
+                && item.StartTime < appointmentEnd
+                && item.EndTime > appointmentStart)
             .ToListAsync();
 
         var hasLeaveConflict = schedules.Any(item =>
@@ -243,10 +313,88 @@ public class ReceptionController : Controller
                 && item.Date.AddMinutes(item.DurationMinutes) > appointmentStart);
     }
 
-    private async Task<AppointmentBookingViewModel> BuildBookingViewModelAsync(AppointmentBookingViewModel model)
+    private async Task<List<AvailabilitySlotResult>> BuildAvailabilitySlotsAsync(
+        long doctorId,
+        DateTime selectedDate,
+        int durationMinutes)
     {
-        var bookingScope = await ResolveBookingScopeAsync();
+        var dayStart = selectedDate.Date;
+        var dayEnd = dayStart.AddDays(1);
+
+        var schedules = await _context.Schedules
+            .AsNoTracking()
+            .Where(item =>
+                item.DoctorId == doctorId
+                && item.StartTime < dayEnd
+                && item.EndTime > dayStart)
+            .ToListAsync();
+
+        var appointments = await _context.Appointments
+            .AsNoTracking()
+            .Where(item =>
+                item.DoctorId == doctorId
+                && item.Status != AppointmentStatus.Cancelled
+                && item.Status != AppointmentStatus.Missed
+                && item.Date < dayEnd
+                && item.Date.AddMinutes(item.DurationMinutes) > dayStart)
+            .ToListAsync();
+
+        var displayStart = dayStart.AddHours(8);
+        var displayEnd = dayStart.AddHours(18);
+
+        if (schedules.Any())
+        {
+            var earliestSchedule = schedules.Min(item => item.StartTime);
+            var latestSchedule = schedules.Max(item => item.EndTime);
+            displayStart = earliestSchedule < displayStart ? earliestSchedule : displayStart;
+            displayEnd = latestSchedule > displayEnd ? latestSchedule : displayEnd;
+        }
+
+        var slots = new List<AvailabilitySlotResult>();
+        for (var slotStart = displayStart; slotStart < displayEnd; slotStart = slotStart.AddMinutes(15))
+        {
+            var slotEnd = slotStart.AddMinutes(durationMinutes);
+            var isWorking = schedules.Any(item =>
+                item.IsOnLeave != true
+                && item.StartTime <= slotStart
+                && item.EndTime >= slotEnd);
+            var hasLeaveConflict = schedules.Any(item =>
+                item.IsOnLeave == true
+                && item.StartTime < slotEnd
+                && item.EndTime > slotStart);
+            var hasAppointmentConflict = appointments.Any(item =>
+                item.Date < slotEnd
+                && item.Date.AddMinutes(item.DurationMinutes) > slotStart);
+
+            var status = hasAppointmentConflict
+                ? "busy"
+                : !isWorking || hasLeaveConflict
+                    ? "not-working"
+                    : "available";
+
+            slots.Add(new AvailabilitySlotResult
+            {
+                Time = slotStart.ToString("hh:mm tt"),
+                Value = slotStart.ToString("HH:mm"),
+                Status = status,
+                StatusLabel = status switch
+                {
+                    "available" => "Available",
+                    "busy" => "Busy",
+                    _ => "Not working"
+                }
+            });
+        }
+
+        return slots;
+    }
+
+    private async Task<AppointmentBookingViewModel> BuildBookingViewModelAsync(
+        AppointmentBookingViewModel model,
+        BookingScopeResult bookingScope)
+    {
         model.CanSelectPatient = !bookingScope.FixedPatientId.HasValue;
+        model.CanSelectDoctor = !bookingScope.FixedDoctorId.HasValue;
 
         var specializations = await _context.Specializations
             .AsNoTracking()
@@ -261,10 +409,17 @@ public class ReceptionController : Controller
             })
             .ToList();
 
-        var doctors = await _context.Doctors
+        IQueryable<Doctor> doctorQuery = _context.Doctors
             .AsNoTracking()
             .Include(item => item.User)
-            .Include(item => item.Specializations)
+            .Include(item => item.Specializations);
+
+        if (bookingScope.FixedDoctorId.HasValue)
+        {
+            doctorQuery = doctorQuery.Where(item => item.Id == bookingScope.FixedDoctorId.Value);
+        }
+
+        var doctors = await doctorQuery
             .OrderBy(item => item.User.FirstName)
             .ThenBy(item => item.User.LastName)
             .ToListAsync();
@@ -281,26 +436,45 @@ public class ReceptionController : Controller
             })
             .ToList();
 
-        var patients = await _context.Patients
-            .AsNoTracking()
-            .Include(item => item.User)
-            .OrderBy(item => item.User.FirstName)
-            .ThenBy(item => item.User.LastName)
-            .ToListAsync();
+        if (model.CanSelectPatient)
+        {
+            IQueryable<Patient> patientQuery = _context.Patients
+                .AsNoTracking()
+                .Include(item => item.User);
 
-        model.Patients = patients
-            .Select(item => new AppointmentBookingPatientOptionViewModel
+            if (bookingScope.AllowedPatientIds is not null)
             {
-                Id = item.Id,
-                FullName = $"{item.User.FirstName} {item.User.LastName}",
-                PatientReference = item.PatientId,
-                Cpr = item.Cpr
-            })
-            .ToList();
+                patientQuery = patientQuery.Where(item => bookingScope.AllowedPatientIds.Contains(item.Id));
+            }
+
+            var patients = await patientQuery
+                .OrderBy(item => item.User.FirstName)
+                .ThenBy(item => item.User.LastName)
+                .ToListAsync();
+
+            model.Patients = patients
+                .Select(item => new AppointmentBookingPatientOptionViewModel
+                {
+                    Id = item.Id,
+                    FullName = $"{item.User.FirstName} {item.User.LastName}",
+                    PatientReference = item.PatientId,
+                    Cpr = item.Cpr
+                })
+                .ToList();
+        }
+        else
+        {
+            model.Patients = new List<AppointmentBookingPatientOptionViewModel>();
+        }
 
         if (bookingScope.FixedPatientId.HasValue)
         {
             model.SelectedPatientId = bookingScope.FixedPatientId.Value;
+        }
+
+        if (bookingScope.FixedDoctorId.HasValue)
+        {
+            model.SelectedDoctorId = bookingScope.FixedDoctorId.Value;
         }
 
         return model;
@@ -308,7 +482,7 @@ public class ReceptionController : Controller
 
     private async Task<BookingScopeResult> ResolveBookingScopeAsync()
     {
-        if (!User.IsInRole("Patient"))
+        if (User.IsInRole("Clinic Manager") || User.IsInRole("Receptionist"))
         {
             return new BookingScopeResult { IsValid = true };
         }
@@ -319,17 +493,50 @@ public class ReceptionController : Controller
             return new BookingScopeResult();
         }
 
-        var patientId = await _context.Patients
-            .AsNoTracking()
-            .Where(item => item.UserId == userId)
-            .Select(item => (long?)item.Id)
-            .FirstOrDefaultAsync();
-
-        return new BookingScopeResult
+        if (User.IsInRole("Patient"))
         {
-            IsValid = patientId.HasValue,
-            FixedPatientId = patientId
-        };
+            var patientId = await _context.Patients
+                .AsNoTracking()
+                .Where(item => item.UserId == userId)
+                .Select(item => (long?)item.Id)
+                .FirstOrDefaultAsync();
+
+            return new BookingScopeResult
+            {
+                IsValid = patientId.HasValue,
+                FixedPatientId = patientId
+            };
+        }
+
+        if (User.IsInRole("Doctor"))
+        {
+            var doctorId = await _context.Doctors
+                .AsNoTracking()
+                .Where(item => item.UserId == userId)
+                .Select(item => (long?)item.Id)
+                .FirstOrDefaultAsync();
+
+            if (!doctorId.HasValue)
+            {
+                return new BookingScopeResult();
+            }
+
+            var patientIds = await _context.Appointments
+                .AsNoTracking()
+                .Where(item => item.DoctorId == doctorId.Value)
+                .Select(item => item.PatientId)
+                .Distinct()
+                .ToListAsync();
+
+            return new BookingScopeResult
+            {
+                IsValid = true,
+                FixedDoctorId = doctorId,
+                AllowedPatientIds = patientIds
+            };
+        }
+
+        return new BookingScopeResult();
     }
 
     private static DateTime GetSuggestedBookingDate()
@@ -343,5 +550,20 @@ public class ReceptionController : Controller
         public bool IsValid { get; set; }
 
         public long? FixedPatientId { get; set; }
+
+        public long? FixedDoctorId { get; set; }
+
+        public IReadOnlyList<long>? AllowedPatientIds { get; set; }
+    }
+
+    private sealed class AvailabilitySlotResult
+    {
+        public string Time { get; set; } = string.Empty;
+
+        public string Value { get; set; } = string.Empty;
+
+        public string Status { get; set; } = string.Empty;
+
+        public string StatusLabel { get; set; } = string.Empty;
     }
 }

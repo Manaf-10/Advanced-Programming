@@ -1,7 +1,20 @@
 @model Oracle_Health.Models.ViewModels.AppointmentBookingViewModel
 
 @{
-    ViewData["Title"] = "Book Appointment";
+    ViewData["Title"] = User.IsInRole("Doctor") ? "Book Follow-up Appointment" : "Book Appointment";
+    var isPatientBooking = User.IsInRole("Patient");
+    var isDoctorFollowUpBooking = User.IsInRole("Doctor");
+    var workspaceLabel = isPatientBooking
+        ? "Patient Booking"
+        : isDoctorFollowUpBooking
+            ? "Doctor Workspace"
+            : "Reception Workspace";
+    var bookingDescription = isPatientBooking
+        ? "Choose your doctor, date, and an available slot. Your appointment request will use your patient account automatically."
+        : isDoctorFollowUpBooking
+            ? "Choose one of your patients, a date, and an available slot for the follow-up appointment."
+            : "Choose a specialization, doctor, patient, and an available slot. The system checks schedule availability and prevents double bookings automatically.";
+    var fixedDoctor = Model.Doctors.FirstOrDefault(item => item.Id == Model.SelectedDoctorId);
 }
 
 <section class="booking-shell">
@@ -11,18 +24,22 @@
                 <div class="card-body booking-card-body">
                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                         <div>
-                            <p class="text-uppercase text-secondary fw-semibold mb-2">Reception Workspace</p>
-                            <h1 class="h2 mb-2">Book Appointment</h1>
-                            <p class="text-muted mb-0">
-                                Choose a specialization, doctor, patient, and an available slot. The system checks
-                                schedule availability and prevents double bookings automatically.
-                            </p>
+                            <p class="text-uppercase text-secondary fw-semibold mb-2">@workspaceLabel</p>
+                            <h1 class="h2 mb-2">@ViewData["Title"]</h1>
+                            <p class="text-muted mb-0">@bookingDescription</p>
                         </div>
                         <div class="bg-light rounded-4 px-4 py-3">
                             <div class="small text-muted">Common durations</div>
                             <div class="fw-semibold">15, 30, 45, or 60 minutes</div>
                         </div>
                     </div>
+
+                    @if (isDoctorFollowUpBooking && !Model.Patients.Any())
+                    {
+                        <div class="alert alert-light border rounded-4">
+                            No related patients are available yet. A follow-up can be created after the patient has an appointment with you.
+                        </div>
+                    }
 
                     <form method="post" class="row g-3 booking-form">
                         @Html.AntiForgeryToken()
@@ -49,48 +66,64 @@
                             <input asp-for="SelectedPatientId" type="hidden" />
                         }
 
-                        <div class="col-md-6">
-                            <label asp-for="SelectedSpecializationId" class="form-label"></label>
-                            <select asp-for="SelectedSpecializationId" class="form-select" id="specialization-select">
-                                <option value="">Any specialization</option>
-                                @foreach (var specialization in Model.Specializations)
-                                {
-                                    <option value="@specialization.Id">@specialization.Label</option>
-                                }
-                            </select>
-                            <span asp-validation-for="SelectedSpecializationId" class="text-danger"></span>
-                        </div>
+                        @if (Model.CanSelectDoctor)
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="SelectedSpecializationId" class="form-label"></label>
+                                <select asp-for="SelectedSpecializationId" class="form-select" id="specialization-select">
+                                    <option value="">Any specialization</option>
+                                    @foreach (var specialization in Model.Specializations)
+                                    {
+                                        <option value="@specialization.Id">@specialization.Label</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="SelectedSpecializationId" class="text-danger"></span>
+                            </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="SelectedDoctorId" class="form-label"></label>
-                            <select asp-for="SelectedDoctorId" class="form-select" id="doctor-select">
-                                <option value="">Select doctor</option>
-                                @foreach (var doctor in Model.Doctors)
-                                {
-                                    <option value="@doctor.Id"
-                                            data-specializations="@string.Join(",", doctor.SpecializationIds)">
-                                        @doctor.FullName | @doctor.SpecializationSummary
-                                    </option>
-                                }
-                            </select>
-                            <span asp-validation-for="SelectedDoctorId" class="text-danger"></span>
-                        </div>
+                            <div class="col-md-6">
+                                <label asp-for="SelectedDoctorId" class="form-label"></label>
+                                <select asp-for="SelectedDoctorId" class="form-select" id="doctor-select">
+                                    <option value="">Select doctor</option>
+                                    @foreach (var doctor in Model.Doctors)
+                                    {
+                                        <option value="@doctor.Id"
+                                                data-specializations="@string.Join(",", doctor.SpecializationIds)">
+                                            @doctor.FullName | @doctor.SpecializationSummary
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="SelectedDoctorId" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <input asp-for="SelectedDoctorId" type="hidden" id="doctor-select" />
+                            <div class="col-md-6">
+                                <div class="w-100 bg-light rounded-3 p-3">
+                                    <div class="small text-muted">Doctor</div>
+                                    <div class="fw-semibold">@(fixedDoctor?.FullName ?? "Current doctor")</div>
+                                </div>
+                            </div>
+                        }
 
                         <div class="col-md-3">
                             <label asp-for="AppointmentDate" class="form-label"></label>
-                            <input asp-for="AppointmentDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <input asp-for="AppointmentDate"
+                                   class="form-control"
+                                   id="appointment-date"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="AppointmentDate" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-3">
                             <label asp-for="AppointmentTime" class="form-label"></label>
-                            <input asp-for="AppointmentTime" class="form-control" />
+                            <input asp-for="AppointmentTime" class="form-control" id="appointment-time" />
                             <span asp-validation-for="AppointmentTime" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-3">
                             <label asp-for="DurationMinutes" class="form-label"></label>
-                            <select asp-for="DurationMinutes" class="form-select">
+                            <select asp-for="DurationMinutes" class="form-select" id="appointment-duration">
                                 <option value="15">15 minutes</option>
                                 <option value="30">30 minutes</option>
                                 <option value="45">45 minutes</option>
@@ -102,8 +135,36 @@
                         <div class="col-md-3 d-flex align-items-end">
                             <div class="w-100 bg-light rounded-3 p-3">
                                 <div class="small text-muted">Initial status</div>
-                                <div class="fw-semibold">@(User.IsInRole("Patient") ? "Requested" : "Confirmed")</div>
+                                <div class="fw-semibold">@(isPatientBooking ? "Requested" : "Confirmed")</div>
                             </div>
+                        </div>
+
+                        <div class="col-12">
+                            <section class="booking-availability-card" aria-labelledby="booking-availability-heading">
+                                <div class="booking-availability-header">
+                                    <div>
+                                        <h2 id="booking-availability-heading">Doctor availability</h2>
+                                        <p id="booking-availability-message">Select a doctor and date to view time slots.</p>
+                                    </div>
+                                    <div class="booking-availability-legend" aria-label="Availability status legend">
+                                        <span class="booking-slot-status booking-slot-status-available">Available</span>
+                                        <span class="booking-slot-status booking-slot-status-busy">Busy</span>
+                                        <span class="booking-slot-status booking-slot-status-not-working">Not working</span>
+                                    </div>
+                                </div>
+                                <div class="booking-availability-table-wrap">
+                                    <table class="booking-availability-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                                <th><span class="visually-hidden">Action</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="booking-availability-slots"></tbody>
+                                    </table>
+                                </div>
+                            </section>
                         </div>
 
                         <div class="col-12">
@@ -130,16 +191,20 @@
     <script>
         const specializationSelect = document.getElementById("specialization-select");
         const doctorSelect = document.getElementById("doctor-select");
+        const appointmentDate = document.getElementById("appointment-date");
+        const appointmentTime = document.getElementById("appointment-time");
+        const appointmentDuration = document.getElementById("appointment-duration");
+        const availabilityMessage = document.getElementById("booking-availability-message");
+        const availabilitySlots = document.getElementById("booking-availability-slots");
 
         function filterDoctors() {
+            if (!specializationSelect || doctorSelect.tagName !== "SELECT") {
+                return;
+            }
+
             const selectedSpecialization = specializationSelect.value;
             Array.from(doctorSelect.options).forEach(option => {
-                if (!option.value) {
-                    option.hidden = false;
-                    return;
-                }
-
-                if (!selectedSpecialization) {
+                if (!option.value || !selectedSpecialization) {
                     option.hidden = false;
                     return;
                 }
@@ -154,9 +219,81 @@
             if (doctorSelect.selectedOptions.length && doctorSelect.selectedOptions[0].hidden) {
                 doctorSelect.value = "";
             }
+
+            loadAvailability();
         }
 
-        specializationSelect.addEventListener("change", filterDoctors);
+        function clearSlots(message) {
+            availabilityMessage.textContent = message;
+            availabilitySlots.replaceChildren();
+        }
+
+        function createSlotRow(slot) {
+            const row = document.createElement("tr");
+            row.className = `booking-slot-row-${slot.status}`;
+
+            const timeCell = document.createElement("td");
+            timeCell.textContent = slot.time;
+
+            const statusCell = document.createElement("td");
+            const status = document.createElement("span");
+            status.className = `booking-slot-status booking-slot-status-${slot.status}`;
+            status.textContent = slot.statusLabel;
+            statusCell.append(status);
+
+            const actionCell = document.createElement("td");
+            if (slot.status === "available") {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "booking-slot-select";
+                button.textContent = "Select";
+                button.addEventListener("click", () => {
+                    appointmentTime.value = slot.value;
+                    appointmentTime.dispatchEvent(new Event("change", { bubbles: true }));
+                });
+                actionCell.append(button);
+            }
+
+            row.append(timeCell, statusCell, actionCell);
+            return row;
+        }
+
+        async function loadAvailability() {
+            if (!doctorSelect.value || !appointmentDate.value) {
+                clearSlots("Select a doctor and date to view time slots.");
+                return;
+            }
+
+            clearSlots("Loading availability...");
+            const parameters = new URLSearchParams({
+                doctorId: doctorSelect.value,
+                date: appointmentDate.value,
+                durationMinutes: appointmentDuration.value
+            });
+
+            try {
+                const response = await fetch(`/appointments/availability?${parameters}`);
+                if (!response.ok) {
+                    throw new Error("Availability request failed.");
+                }
+
+                const availability = await response.json();
+                availabilityMessage.textContent =
+                    `Showing ${availability.durationMinutes}-minute slots for ${availability.date}.`;
+                availability.slots.forEach(slot => availabilitySlots.append(createSlotRow(slot)));
+            }
+            catch (error) {
+                console.error(error);
+                clearSlots("Availability could not be loaded. Please try again.");
+            }
+        }
+
+        specializationSelect?.addEventListener("change", filterDoctors);
+        doctorSelect.addEventListener("change", loadAvailability);
+        appointmentDate.addEventListener("change", loadAvailability);
+        appointmentDuration.addEventListener("change", loadAvailability);
+
         filterDoctors();
+        loadAvailability();
     </script>
 }
