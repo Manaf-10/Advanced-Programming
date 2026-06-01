@@ -35,9 +35,10 @@ builder.Services.AddDbContext<ClinicManagementSystemContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IValidationService, ValidationService>();
 
+var apiBaseUrl = builder.Configuration["Api:BaseUrl"] ?? "https://localhost:7174/";
 builder.Services.AddHttpClient("OracleHealthApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7174/");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
 var app = builder.Build();
 
