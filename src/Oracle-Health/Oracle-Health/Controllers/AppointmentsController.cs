@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Oracle_Health.Hubs;
 using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
+using Oracle_Health.Services;
 
 namespace Oracle_Health.Controllers;
 
@@ -13,13 +14,16 @@ public class AppointmentsController : Controller
 {
     private readonly ClinicManagementSystemContext _context;
     private readonly IHubContext<AppointmentHub> _appointmentHub;
+    private readonly IValidationService _validationService;
 
     public AppointmentsController(
         ClinicManagementSystemContext context,
-        IHubContext<AppointmentHub> appointmentHub)
+        IHubContext<AppointmentHub> appointmentHub,
+        IValidationService validationService)
     {
         _context = context;
         _appointmentHub = appointmentHub;
+        _validationService = validationService;
     }
 
     [Authorize]
@@ -182,10 +186,26 @@ public class AppointmentsController : Controller
         }
 
         var oldDoctorId = appointment.DoctorId;
+        var newAppointmentDate = model.AppointmentDate.Value.Date.Add(model.AppointmentTime.Value);
+
+        if (model.Status != AppointmentStatus.Cancelled && model.Status != AppointmentStatus.Missed)
+        {
+            var validation = await _validationService.CheckAppointmentConflict(
+                model.DoctorId,
+                newAppointmentDate,
+                model.DurationMinutes,
+                id);
+
+            if (!validation.IsValid)
+            {
+                TempData["ErrorMessage"] = validation.Message;
+                return RedirectToAction("Details", "Doctor", new { id = oldDoctorId });
+            }
+        }
 
         appointment.PatientId = model.PatientId;
         appointment.DoctorId = model.DoctorId;
-        appointment.Date = model.AppointmentDate.Value.Date.Add(model.AppointmentTime.Value);
+        appointment.Date = newAppointmentDate;
         appointment.DurationMinutes = model.DurationMinutes;
         appointment.Status = model.Status;
 

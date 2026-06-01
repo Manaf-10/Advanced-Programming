@@ -4,16 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Oracle_Health.Models;
 using Oracle_Health.Models.ViewModels;
+using Oracle_Health.Services;
 
 namespace Oracle_Health.Controllers;
 
 public class DoctorController : Controller
 {
     private readonly ClinicManagementSystemContext _context;
+    private readonly IValidationService _validationService;
 
-    public DoctorController(ClinicManagementSystemContext context)
+    public DoctorController(ClinicManagementSystemContext context, IValidationService validationService)
     {
         _context = context;
+        _validationService = validationService;
     }
     /**
      * The Index action retrieves a list of doctors from the database, including their associated 
@@ -147,6 +150,32 @@ public class DoctorController : Controller
         if (!doctorExists)
         {
             return NotFound();
+        }
+
+        if (model.IsOnLeave)
+        {
+            var impactedAppointments = await _validationService.GetImpactedAppointments(id, startTime, endTime);
+            if (model.ScheduleId.HasValue)
+            {
+                var existingSchedule = await _context.Schedules
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(item => item.Id == model.ScheduleId.Value && item.DoctorId == id);
+
+                if (existingSchedule is not null)
+                {
+                    impactedAppointments = impactedAppointments
+                        .Where(item =>
+                            item.Date < endTime
+                            && item.Date.AddMinutes(item.DurationMinutes) > startTime)
+                        .ToList();
+                }
+            }
+
+            if (impactedAppointments.Count > 0)
+            {
+                TempData["ErrorMessage"] = $"There are {impactedAppointments.Count} appointments during this leave period. Reschedule them first.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
         }
 
         Schedule schedule;

@@ -106,6 +106,38 @@
     </article>
 </section>
 
+<section class="report-card">
+    <h2>Recent patient visits</h2>
+    @if (!Model.RecentPatients.Any())
+    {
+        <p>No recent completed visits.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Visit date</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var patient in Model.RecentPatients)
+                {
+                    <tr>
+                        <td>@patient.PatientName</td>
+                        <td>@patient.DoctorName</td>
+                        <td>@patient.LastVisitDate.ToString("dd MMM yyyy")</td>
+                        <td>@patient.Summary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

@@ -13,4 +13,6 @@ public class ReportsDashboardViewModel
     public CancellationReport? Cancellations { get; set; }
 
     public IReadOnlyList<AppointmentStatusReportItem> AppointmentStatuses { get; set; } = [];
+
+    public IReadOnlyList<RecentPatientReportItem> RecentPatients { get; set; } = [];
 }

@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Oracle_Health.Data;
 using Oracle_Health.Hubs;
 using Oracle_Health.Models;
+using Oracle_Health.Services;
 
 LoadDotEnv();
 
@@ -32,6 +33,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ClinicManagementSystemContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IValidationService, ValidationService>();
 
 builder.Services.AddHttpClient("OracleHealthApi", client =>
 {
