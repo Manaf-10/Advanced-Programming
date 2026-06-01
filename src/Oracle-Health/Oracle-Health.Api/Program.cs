@@ -13,6 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MvcClient", policy =>
+    {
+        var mvcClientOrigin = builder.Configuration["MvcClientOrigin"];
+        var allowedOrigins = string.IsNullOrWhiteSpace(mvcClientOrigin)
+            ? ["http://localhost:5036", "https://localhost:7295"]
+            : mvcClientOrigin.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddDbContext<ClinicManagementSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -49,6 +63,7 @@ if (app.Environment.IsDevelopment())
 
 await DatabaseSeeder.SeedAsync(app.Services);
 
+app.UseCors("MvcClient");
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -111,10 +111,8 @@ Notion routing table: [Routing Table](https://www.notion.so/Routing-Table-32c1a2
 | Method | Route | Access | Description | Status |
 | --- | --- | --- | --- | --- |
 | GET | `/Doctor` | Staff | List all doctors | Finished |
-| GET | `/reports` | Clinic Manager | Display reporting dashboard | Finished |
-| GET | `/reports/statistics` | Clinic Manager | Display overall appointment statistics | Finished |
-| GET | `/reports/doctor-workload` | Clinic Manager | Display doctor workload and utilization report | Finished |
-| GET | `/reports/cancellations` | Clinic Manager | Display cancellation and missed appointment report | Finished |
+| GET | `/reports` | Clinic Manager | Display the reporting dashboard in the separate Reporting app | Finished |
+| GET | `/reports/statistics` | Clinic Manager | Open the reporting dashboard from the MVC Statistics navigation item | Finished |
 | GET | `/api/reports/summary` | Clinic Manager API | Return overall appointment statistics | Finished |
 | GET | `/api/reports/doctor-workload` | Clinic Manager API | Return doctor workload and utilization report data | Finished |
 | GET | `/api/reports/cancellations` | Clinic Manager API | Return cancellation and missed appointment report data | Finished |

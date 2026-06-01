@@ -30,4 +30,11 @@
     <ProjectReference Include="..\Oracle-Health.Api\Oracle-Health.Api.csproj" />
   </ItemGroup>
 
+  <Target Name="RemoveApiAppSettingsFromMvcPublish" BeforeTargets="_HandleFileConflictsForPublish">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                             Condition="$([System.String]::Copy('%(ResolvedFileToPublish.Identity)').Contains('Oracle-Health.Api')) And $([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)').StartsWith('appsettings'))" />
+    </ItemGroup>
+  </Target>
+
 </Project>

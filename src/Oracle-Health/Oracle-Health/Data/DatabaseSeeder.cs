@@ -13,7 +13,7 @@ public static class DatabaseSeeder
         using var scope = services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ClinicManagementSystemContext>();
 
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.MigrateAsync();
 
         if (await context.Users.AnyAsync(user => user.Email == "manager@oraclehealth.test"))
         {
