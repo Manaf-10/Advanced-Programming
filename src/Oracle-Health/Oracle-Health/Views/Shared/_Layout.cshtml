@@ -6,7 +6,7 @@
 @{
     var layoutIsAuthenticated = User.Identity?.IsAuthenticated == true;
     var layoutNotifications = new List<Oracle_Health.Models.Notification>();
-    var reportingBaseUrl = Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055";
+    var reportingBaseUrl = (Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055").TrimEnd('/');
 
     if (layoutIsAuthenticated && long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var layoutUserId))
     {
@@ -199,7 +199,7 @@
                         <span>LB</span>
                         <span>Live Board</span>
                     </a>
-                    <a href="@($"{reportingBaseUrl}/reports/statistics")" class="nav-link-item">
+                    <a href="@reportingBaseUrl" class="nav-link-item">
                         <span>ST</span>
                         <span>Statistics</span>
                     </a>

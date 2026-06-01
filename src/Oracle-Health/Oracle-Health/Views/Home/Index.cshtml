@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Home";
-    var reportingBaseUrl = Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055";
+    var reportingBaseUrl = (Configuration["Reporting:BaseUrl"] ?? "http://localhost:5055").TrimEnd('/');
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     var roleName = User.IsInRole("Clinic Manager")
         ? "Clinic Manager"
@@ -31,7 +31,7 @@
         {
             @if (User.IsInRole("Clinic Manager"))
             {
-                <a href="@($"{reportingBaseUrl}/reports/statistics")" class="home-action-card">
+                <a href="@reportingBaseUrl" class="home-action-card">
                     <span>Reports</span>
                     <strong>Review clinic performance and appointment trends.</strong>
                 </a>
